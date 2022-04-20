@@ -64,7 +64,7 @@ const main = db => {
               ...r
             , `${c} ${_schema[c]}`
             ]
-          , [ ]
+          , []
           )
           .join(', ')
         }

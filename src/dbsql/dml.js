@@ -1,4 +1,5 @@
 import { uuid } from '../dep.js'
+import dql from './dql.js'
 
 const main = db => {
 
@@ -35,9 +36,34 @@ const main = db => {
       }
     `)
 
+  const updateFromTableByObjectId = (tableName, ObjectId, newData) => {
+    const { getFromTableByObjectId } = dql(db)
+    const oldData = getFromTableByObjectId(tableName, ObjectId)
+    const _newData = {
+      ...oldData
+    , ...newData
+    }
+    db.query(`
+      UPDATE ${tableName}
+      SET ${
+        Object.entries(_newData)
+        .reduce(
+          (r, c) => [
+            ...r
+          , `${c[0]} = '${c[1]}'`
+          ]
+        , []
+        )
+        .join(', ')
+      }
+      WHERE objectId = '${ObjectId}'
+    `)
+  }
+
   return {
     insertTable
   , deleteFromTableByObjectId
+  , updateFromTableByObjectId
   }
 
 }

@@ -9,3 +9,4 @@ trash
 /.drake.cache.json
 
 .pnpm*
+*.db

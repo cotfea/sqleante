@@ -9,6 +9,8 @@ const {
 , createTable
 , insertTable
 , deleteFromTableByObjectId
+, getFromTableByObjectId
+, updateFromTableByObjectId
 } = dbsql
 
 console.log(showDB())
@@ -60,12 +62,46 @@ userData
 
 console.log({user: users()})
 
-users()
-.forEach(
-  user => {
-    const objectId = user[0]
-    deleteFromTableByObjectId('user', objectId)
+const objectId = Object.keys(users())[0]
+
+console.log({objectId})
+
+const oneUser = getFromTableByObjectId(
+  'user', Object.keys(users())[0]
+)
+
+console.log({userOne: oneUser})
+
+updateFromTableByObjectId(
+  'user'
+, objectId
+, {
+    username: '王五'
   }
+)
+
+console.log({user: users()})
+
+updateFromTableByObjectId(
+  'user'
+, objectId
+, {
+    phone: 13012345678
+  }
+)
+
+console.log({user: users()})
+
+console.log({
+  userOne: getFromTableByObjectId(
+    'user', objectId
+  )
+})
+
+Object.keys(users())
+.forEach(
+  objectId =>
+    deleteFromTableByObjectId('user', objectId)
 )
 
 console.log({user: users()})
