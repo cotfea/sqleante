@@ -64,8 +64,12 @@ const main = db => {
           : ``
         }
         ${
-          option?.limit
-          ? `LIMIT ${option.limit}`
+          option?.limit || option?.offset
+          ? `LIMIT ${
+              option?.limit
+              ? option?.limit
+              : 100
+            }`
           : ''
         }
         ${
