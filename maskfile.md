@@ -22,3 +22,18 @@ podman run --rm -ti \
 ```bash
 deno run  -A ./src/main.js
 ```
+
+
+## deno cache
+
+```bash
+export DENO_DIR=./.deno
+deno cache ./src/dbsql/main.test.js
+```
+
+## install sqlite3
+
+```bash
+apt install -y sqlite3
+export DENO_SQLITE_PATH=/usr/lib/x86_64-linux-gnu/libsqlite3.so.0
+```

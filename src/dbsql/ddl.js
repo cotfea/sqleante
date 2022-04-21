@@ -17,7 +17,7 @@ const main = db => {
     )
 
   const showSchema = tableName => {
-    const r = showDB().reduce(
+    const ret = showDB().reduce(
       (r, c) => ({
         ...r
       , ...c[0] === 'table'
@@ -45,9 +45,9 @@ const main = db => {
       })
     , {}
     )
-    return tableName && r[tableName]
-    ? r[tableName]
-    : r
+    return tableName && ret[tableName]
+    ? ret[tableName]
+    : ret
   }
 
   const createTable = (tableName, schema) => {

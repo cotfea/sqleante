@@ -10,3 +10,4 @@ trash
 
 .pnpm*
 *.db
+/.deno
