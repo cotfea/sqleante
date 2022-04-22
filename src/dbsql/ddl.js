@@ -52,7 +52,7 @@ const main = db => {
 
   const createTable = (tableName, schema) => {
     const _schema = {
-      objectId: 'TEXT PRIMARY KEY'
+      objectId: 'TEXT UNIQUE'
     , ...schema
     }
     return db.query(`

@@ -51,15 +51,22 @@ const main = db => {
         SELECT ${
           option?.select
           ? Array.isArray(option.select)
-          ? `objectId, ${option.select.join(' ')}`
+          ? `objectId, ${option.select.join(', ')}`
           : `objectId, ${option.select}`
           : '*'
         }
         FROM ${tableName}
         ${
+          option?.groupBy
+          ? Array.isArray(option.groupBy)
+          ? `GROUP BY ${option.groupBy.join(', ')}`
+          : `GROUP BY ${option.groupBy}`
+          : ``
+        }
+        ${
           option?.orderBy
           ? Array.isArray(option.orderBy)
-          ? `ORDER BY ${option.orderBy.join(' ')}`
+          ? `ORDER BY ${option.orderBy.join(', ')}`
           : `ORDER BY ${option.orderBy}`
           : ``
         }
@@ -80,7 +87,7 @@ const main = db => {
       `)
     , db, tableName
     , option
-    )
+  )
 
   const getFromTableByObjectId = (tableName, objectId, option) =>
 
@@ -89,7 +96,7 @@ const main = db => {
         SELECT ${
           option?.select
           ? Array.isArray(option.select)
-          ? `objectId, ${option.select.join(' ')}`
+          ? `objectId, ${option.select.join(', ')}`
           : `objectId, ${option.select}`
           : '*'
         }

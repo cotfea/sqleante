@@ -42,7 +42,7 @@ const listTest = option => listTable('test', option)
 
 console.log({test: listTest()})
 
-const userData = 
+const insertDatas = 
 new Array(100).fill(0)
 .map(
   (t, i) => ({
@@ -51,7 +51,7 @@ new Array(100).fill(0)
   })
 )
 
-userData
+insertDatas
 .forEach(
   insertData =>
     insertTable('test', insertData)
