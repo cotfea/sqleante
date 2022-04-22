@@ -83,9 +83,10 @@ const main = db => {
           : `objectId, ${option.select}`
           : '*'
         }
-        FROM ${tableName} ${
+        FROM ${tableName}
+        ${
           option?.where
-          ? expressionHandler(option.where)
+          ? `WHERE ${expressionHandler(option.where)}`
           : ''
         }
         ${
@@ -117,7 +118,7 @@ const main = db => {
           : ''
         }
         ${
-          option?.offset
+          option?.offset && option?.limit
           ? `OFFSET ${option.offset}`
           : ''
         }

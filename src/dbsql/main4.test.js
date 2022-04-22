@@ -61,6 +61,14 @@ insertTable(
 )
 
 console.log({test: listTest()})
+console.log({test: listTest({
+  where: {
+    $lt: [
+      'age'
+    , 30
+    ]
+  }
+})})
 
 // SELECT * FROM COMPANY GROUP BY name HAVING count(name) < 2;
 const groupByHaving = () =>
@@ -72,9 +80,15 @@ const groupByHaving = () =>
     , 'group_concat(address) as address'
     , 'salary'
     ]
+  , where: {
+      $gt: [
+        'age'
+      , 25
+      ]
+    }
   , groupBy: 'name'
   , having: {
-      '$lt': [ 'count(name)', '2' ]
+      $lt: [ 'count(name)', 2 ]
     }
   })
 
