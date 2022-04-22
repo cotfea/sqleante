@@ -54,16 +54,16 @@ const main = db => {
       t =>
             schema[t] === 'INTEGER PRIMARY KEY'
         ||  t === 'objectId'
-        ? false
-        : true
+        ?   false
+        :   true
     )
 
         Array.isArray(insertData)
     &&  insertData.reduce(
           (r, c) =>
-                typeof c === 'object'
+                r === true
             ||  Array.isArray(c)
-            ||  r === true
+            ||  typeof c === 'object'
             ?   true
             :   r
         , false
@@ -80,7 +80,9 @@ const main = db => {
         )
         .join(',')
       )
-    : db.query(insertTableOne(tableName, insertData, schemaKeys))
+    : db.query(
+        insertTableOne(tableName, insertData, schemaKeys)
+      )
 
   }
 
