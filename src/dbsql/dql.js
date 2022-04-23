@@ -2,11 +2,11 @@ import ddl from './ddl.js'
 import expressionHandler from './expression.js'
 
 const groupByObjectId = (
-  qryArr, db, tableName, option
+  qryArr, query, tableName, option
 ) => {
 
   const schemaKeys = Object.keys(
-    ddl(db).showSchema(tableName)
+    ddl(query).showSchema(tableName)
   )
 
   const fields =
@@ -67,12 +67,12 @@ const groupByObjectId = (
 
 }
 
-const main = db => {
+const main = query => {
 
   const listTable = (tableName, option) =>
 
     groupByObjectId(
-      db.query(`
+      query(`
         SELECT
         ${
           option?.select
@@ -123,14 +123,14 @@ const main = db => {
           : ''
         }
       `)
-    , db, tableName
+    , query, tableName
     , option
   )
 
   const getFromTableByObjectId = (tableName, objectId, option) =>
 
     groupByObjectId(
-      db.query(`
+      query(`
         SELECT ${
           option?.select
           ? Array.isArray(option.select)
@@ -141,7 +141,7 @@ const main = db => {
         FROM ${tableName}
         WHERE objectId = '${objectId}'
       `)
-    , db, tableName
+    , query, tableName
     , option
     )
     [objectId]
@@ -153,4 +153,4 @@ const main = db => {
 
 }
 
-export default db => main(db)
+export default query => main(query)

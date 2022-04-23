@@ -2,7 +2,7 @@ import { uuid } from '../dep.js'
 import dql from './dql.js'
 import ddl from './ddl.js'
 
-const main = db => {
+const main = query => {
 
   const insertTableOne = (
       tableName
@@ -48,7 +48,7 @@ const main = db => {
 
   const insertTable = (tableName, insertData) => {
 
-    const schema = ddl(db).showSchema(tableName)
+    const schema = ddl(query).showSchema(tableName)
     const schemaKeys = Object.keys( schema )
     .filter(
       t =>
@@ -69,25 +69,25 @@ const main = db => {
         , false
         )
 
-    ? db.query(
-        insertData.map(
-          (t, i) => insertTableOne(
-            tableName, t, schemaKeys
-          ,   i === 0
-            ? true
-            : false
+    ?   query(
+          insertData.map(
+            (t, i) => insertTableOne(
+              tableName, t, schemaKeys
+            ,   i === 0
+              ? true
+              : false
+            )
           )
+          .join(',')
         )
-        .join(',')
-      )
-    : db.query(
-        insertTableOne(tableName, insertData, schemaKeys)
-      )
+    :   query(
+          insertTableOne(tableName, insertData, schemaKeys)
+        )
 
   }
 
   const deleteFromTableByObjectId = (tableName, ObjectId) =>
-    db.query(`
+    query(`
       DELETE FROM ${tableName}
       ${
         ObjectId
@@ -97,13 +97,13 @@ const main = db => {
     `)
 
   const updateFromTableByObjectId = (tableName, ObjectId, newData) => {
-    const { getFromTableByObjectId } = dql(db)
+    const { getFromTableByObjectId } = dql(query)
     const oldData = getFromTableByObjectId(tableName, ObjectId)
     const _newData = {
       ...oldData
     , ...newData
     }
-    db.query(`
+    query(`
       UPDATE ${tableName}
       SET ${
         Object.entries(_newData)
@@ -128,4 +128,4 @@ const main = db => {
 
 }
 
-export default db => main(db)
+export default query => main(query)

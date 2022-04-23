@@ -1,7 +1,7 @@
-const main = db => {
+const main = query => {
 
   const showDB = () => // sqlite_schema
-    db.query(`
+    query(`
       SELECT * FROM sqlite_master
     `)
 
@@ -55,7 +55,7 @@ const main = db => {
       objectId: 'TEXT UNIQUE'
     , ...schema
     }
-    return db.query(`
+    return query(`
       CREATE TABLE IF NOT EXISTS ${tableName} (
         ${
           Object.keys(_schema)
@@ -73,7 +73,7 @@ const main = db => {
   }
 
   const dropTable = tableName =>
-    db.query(`
+    query(`
       DROP TABLE IF EXISTS ${tableName}
     `)
 
@@ -87,4 +87,4 @@ const main = db => {
 
 }
 
-export default db => main(db)
+export default query => main(query)
