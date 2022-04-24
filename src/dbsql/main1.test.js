@@ -1,5 +1,8 @@
 import dbsql from './main.js'
 
+import { DB } from '../dep.js'
+const db = new DB("test.db")
+
 const {
   showDB
 , show
@@ -11,7 +14,7 @@ const {
 , deleteFromTableByObjectId
 , getFromTableByObjectId
 , updateFromTableByObjectId
-} = dbsql
+} = dbsql(db)
 
 console.log(showDB())
 
@@ -37,7 +40,7 @@ createTable(
 
 console.log({tables: showTables()})
 
-console.log(showSchema())
+console.log({schema: showSchema()})
 
 const users = () => listTable('user')
 

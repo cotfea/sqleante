@@ -1,6 +1,9 @@
 import dbsql from './main.js'
 import randomInt from 'https://deno.land/std@0.136.0/node/_crypto/randomInt.ts'
 
+import { DB } from '../dep.js'
+const db = new DB("test.db")
+
 const {
   showDB
 , show
@@ -10,7 +13,7 @@ const {
 , createTable
 , insertTable
 , getFromTableByObjectId
-} = dbsql
+} = dbsql(db)
 
 console.log(showDB())
 

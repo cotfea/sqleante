@@ -1,4 +1,6 @@
 import dbsql from './main.js'
+import { DB } from '../dep.js'
+const db = new DB("test.db")
 
 const {
   showDB
@@ -8,7 +10,7 @@ const {
 , listTable
 , createTable
 , insertTable
-} = dbsql
+} = dbsql(db)
 
 console.log(showDB())
 

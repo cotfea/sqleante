@@ -2,7 +2,6 @@ import { uuid } from '../dep.js'
 import dql from './dql.js'
 import ddl from './ddl.js'
 import expressionHandler from './expression.js'
-import { utils } from './main.js' 
 
 const main = query => {
 
@@ -24,33 +23,39 @@ const main = query => {
         , values: Object.values(insertData)
         }
 
-    return `
-      ${
-        needHeader
-        ? `
-          INSERT INTO ${tableName}
-          (
-            objectId
-          , ${entries.keys.join(', ')}
-          )
-          VALUES
-        `
-        : ''
-      }
-      (
-        '${uuid()}'
-      , ${
-          entries.values
-          .map(t => `'${t}'`)
-          .join(', ')
+    const _uuid = uuid()
+
+    return {
+      ret: _uuid
+    , sql: `
+        ${
+          needHeader
+          ? `
+            INSERT INTO ${tableName}
+            (
+              objectId
+            , ${entries.keys.join(', ')}
+            )
+            VALUES
+          `
+          : ''
         }
-      )
-    `
+        (
+          '${_uuid}'
+        , ${
+            entries.values
+            .map(t => `'${t}'`)
+            .join(', ')
+          }
+        )
+      `
+    }
   }
 
   const insertTable = (tableName, insertData) => {
 
     const schema = ddl(query).showSchema(tableName)
+
     const schemaKeys = Object.keys( schema )
     .filter(
       t =>
@@ -60,7 +65,7 @@ const main = query => {
         :   true
     )
 
-        Array.isArray(insertData)
+    return Array.isArray(insertData)
     &&  insertData.reduce(
           (r, c) =>
                 r === true
@@ -80,44 +85,76 @@ const main = query => {
               : false
             )
           )
-          .join(',')
+          .reduce(
+            (r, c, i) => ({
+              ns: r.ns
+            , ret: [
+                ...r.ret
+              , c.ret
+              ]
+            , sql: `
+                ${r.sql}
+                ${
+                  i === 0
+                ? ''
+                : ','
+                } ${
+                  c.sql
+                }
+              `
+            })
+          , {
+              ns: 'insertTable'
+            , ret: []
+            , sql: ''
+            }
+          )
         )
 
-    :   query(
-          insertTableOne(tableName, insertData, schemaKeys)
-        )
+    :   query({
+          ...insertTableOne(tableName, insertData, schemaKeys)
+        , ns: 'insertTable'
+        })
 
   }
 
-  const deleteTable = (tableName, option) =>
-    query(`
-      DELETE FROM ${tableName}
-      ${
-        option?.where
-        ? `WHERE ${expressionHandler(option.where)}`
-        : ''
-      }
-    `)
+  const deleteTable = (tableName, option = {}) => {
 
-  const cleanTable = (tableName) => {
-    const listTable = dql(query).listTable(tableName)
-    const allObjectKeys = Object.keys(listTable)
-    deleteTable(
-      tableName
-    , {
-        where: {
-          $in: [
-            'objectId'
-          , utils.ArrayIn(allObjectKeys)
-          ]
+    const limitDefault = 1000
+    const _option =
+      option?.limit <= limitDefault
+    ? option.limit
+    : {
+        ...option
+      , limit: limitDefault
+      }
+
+    const deleteData =
+      Object.keys(
+        dql(query).listTable(tableName, _option)
+      )
+
+    return query({
+      ns: 'deleteTable'
+    , ret: deleteData
+    , sql: `
+        DELETE FROM ${tableName}
+        ${
+          option?.where
+          ? `WHERE ${expressionHandler(_option.where)}`
+          : ''
         }
-      }
-    )
+      `
+    })
   }
 
-  const deleteFromTableByObjectId = (tableName, objectId) =>
+  const cleanTable = (tableName) => ({
+    ...deleteTable( tableName )
+  , ns: 'cleanTable'
+  })
 
-    deleteTable(tableName, {
+  const deleteFromTableByObjectId = (tableName, objectId) => ({
+    ...deleteTable(tableName, {
       where: {
         $eq: [
           'objectId'
@@ -125,6 +162,9 @@ const main = query => {
         ]
       }
     })
+  , ns: 'deleteFromTableByObjectId'
+  // , ret: objectId
+  })
 
   const updateFromTableByObjectId = (tableName, objectId, newData) => {
 
@@ -135,32 +175,39 @@ const main = query => {
     , ...newData
     }
 
-    query(`
-      UPDATE ${tableName}
-      SET ${
-        Object.entries(_newData)
-        .reduce(
-          (r, c) => [
-            ...r
-          , `${c[0]} = '${c[1]}'`
-          ]
-        , []
-        )
-        .join(', ')
-      }
-      WHERE objectId = '${objectId}'
-    `)
+    query({
+      ns: 'updateFromTableByObjectId'
+    // , ret: objectId
+    , sql: `
+        UPDATE ${tableName}
+        SET ${
+          Object.entries(_newData)
+          .reduce(
+            (r, c) => [
+              ...r
+            , `${c[0]} = '${c[1]}'`
+            ]
+          , []
+          )
+          .join(', ')
+        }
+        WHERE objectId = '${objectId}'
+      `
+    })
 
   }
 
   const updateTable = (tableName, newDatas) => {
-    console.log(newDatas)
     const entries = Object.entries(newDatas)
-    console.log(entries)
-    entries
-    .map(
-      t => updateFromTableByObjectId(tableName, t[0], t[1])
-    )
+    return {
+      ns: 'updateTable'
+    // , ret: newDatas
+    , sql:
+        entries
+        .map(
+          t => updateFromTableByObjectId(tableName, t[0], t[1])
+        )
+    }
   }
 
   return {

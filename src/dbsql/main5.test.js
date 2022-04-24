@@ -1,6 +1,9 @@
 import dbsql, { utils } from './main.js'
 import randomInt from 'https://deno.land/std@0.136.0/node/_crypto/randomInt.ts'
 
+import { DB } from '../dep.js'
+const db = new DB("test.db")
+
 const {
   showDB
 , show
@@ -12,7 +15,7 @@ const {
 , deleteTable
 , cleanTable
 , updateTable
-} = dbsql
+} = dbsql(db)
 
 console.log(showDB())
 
@@ -70,7 +73,7 @@ deleteTable(
     where: {
       $in: [
         'objectId'
-      , utils.ArrayIn(deleteKeys)
+      , utils.arrayIn(deleteKeys)
       ]
     }
   }
