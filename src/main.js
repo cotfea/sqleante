@@ -1,11 +1,7 @@
-import {
-  oak
-, uuid
-, DB
-} from './dep.js'
+import { oak, uuid, DB } from "../deps.js";
 
 // Open a database
-const db = new DB("test.db")
+const db = new DB("test.db");
 
 // const names = ["Peter Parker", "Clark Kent", "Bruce Wayne"];
 
@@ -22,21 +18,16 @@ const db = new DB("test.db")
 // Close connection
 // db.close();
 
-const router =
-  new oak.Router()
+const router = new oak.Router()
 
-  .get('/', ctx => {
-    ctx.response.body = 'Hello World!!!'
+  .get("/", (ctx) => {
+    ctx.response.body = "Hello World!!!";
   })
 
-  .post('/api/1.1/classes/:classname', async ctx => {
+  .post("/api/1.1/classes/:classname", async (ctx) => {
+    const { classname } = ctx.params ? ctx.params : { classname: "" };
 
-    const { classname } =
-        ctx.params
-      ? ctx.params
-      : { classname: '' }
-
-    const rJson = await ctx.request.body({type: 'json'}).value
+    const rJson = await ctx.request.body({ type: "json" }).value;
 
     db.query(`
       CREATE TABLE IF NOT EXISTS user (
@@ -44,7 +35,7 @@ const router =
       , username  TEXT
       , phone     TEXT
       )
-    `)
+    `);
 
     db.query(`
       INSERT INTO ${classname}
@@ -59,36 +50,29 @@ const router =
       , ${rJson.classname}
       , ${rJson.phone}
       )
-    `)
+    `);
 
-    ctx.response.body = {}
+    ctx.response.body = {};
   })
 
-  .get('/api/1.1/classes/:classname', ctx => {
-    const { classname } =
-        ctx.params
-      ? ctx.params
-      : { classname: '' }
-    ctx.response.body = `Hello ${classname}!!!`
+  .get("/api/1.1/classes/:classname", (ctx) => {
+    const { classname } = ctx.params ? ctx.params : { classname: "" };
+    ctx.response.body = `Hello ${classname}!!!`;
   })
 
-  .get('/api/1.1/classes/:classname/:objectId', ctx => {
-    const {
-      classname
-    , objectId
-    } =
-        ctx.params
+  .get("/api/1.1/classes/:classname/:objectId", (ctx) => {
+    const { classname, objectId } = ctx.params
       ? ctx.params
       : {
-          classname: ''
-        , objectId: ''
-        }
-    ctx.response.body = `Hello ${classname} ${objectId}!!!`
-  })
+          classname: "",
+          objectId: "",
+        };
+    ctx.response.body = `Hello ${classname} ${objectId}!!!`;
+  });
 
-console.log('http://localhost:9000')
+console.log("http://localhost:9000");
 
 await new oak.Application()
-.use(router.routes())
-.use(router.allowedMethods())
-.listen({ port: 9000 })
+  .use(router.routes())
+  .use(router.allowedMethods())
+  .listen({ port: 9000 });

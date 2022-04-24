@@ -1,13 +1,13 @@
-import { DB } from '../dep.js'
+import { DB } from "../../deps.js";
 
-const db = new DB("test.db")
+const db = new DB("test.db");
 
-export default sql => {
+export default (sql) => {
   // console.log(
   //   sql
   //   .replace(/\n/g, '')
   //   .replace(/^ {2,}/g, '')
   //   .replace(/ {2,}/g, ' ')
   // )
-  return db.query(sql)
-}
+  return db.query(sql);
+};
