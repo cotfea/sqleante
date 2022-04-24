@@ -153,12 +153,23 @@ const main = query => {
 
   }
 
+  const updateTable = (tableName, newDatas) => {
+    console.log(newDatas)
+    const entries = Object.entries(newDatas)
+    console.log(entries)
+    entries
+    .map(
+      t => updateFromTableByObjectId(tableName, t[0], t[1])
+    )
+  }
+
   return {
     insertTable
   , deleteTable
   , cleanTable
   , deleteFromTableByObjectId
   , updateFromTableByObjectId
+  , updateTable
   }
 
 }

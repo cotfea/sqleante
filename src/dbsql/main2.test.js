@@ -9,9 +9,7 @@ const {
 , listTable
 , createTable
 , insertTable
-, deleteFromTableByObjectId
 , getFromTableByObjectId
-, updateFromTableByObjectId
 } = dbsql
 
 console.log(showDB())

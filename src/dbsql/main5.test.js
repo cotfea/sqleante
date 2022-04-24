@@ -11,6 +11,7 @@ const {
 , insertTable
 , deleteTable
 , cleanTable
+, updateTable
 } = dbsql
 
 console.log(showDB())
@@ -74,6 +75,27 @@ deleteTable(
     }
   }
 )
+
+console.log({test: listTest()})
+
+const tableDatas = listTest()
+
+const newTableDatas =
+  Object.keys(tableDatas)
+  .reduce(
+    (r, c) => ({
+      ...r
+    , [c]: {
+        id: tableDatas[c].id + 3
+      , content: `${Number.parseInt(tableDatas[c].content) + 3}`
+      }
+    })
+  , {}
+  )
+
+console.log({newTableDatas})
+
+updateTable('test', newTableDatas)
 
 console.log({test: listTest()})
 
