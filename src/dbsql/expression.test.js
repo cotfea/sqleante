@@ -19,7 +19,7 @@ const expression = {
       , 'ddd'
       ]
     ,
-      '$bettwen': [
+      '$between': [
         'AGE'
       , {
           '$and': [

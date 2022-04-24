@@ -99,6 +99,25 @@ updateTable('test', newTableDatas)
 
 console.log({test: listTest()})
 
+deleteTable(
+  'test'
+, {
+    where: {
+      $between: [
+        'id'
+      , {
+          $and: [
+            '8'
+          , '10'
+          ]
+        }
+      ]
+    }
+  }
+)
+
+console.log({test: listTest()})
+
 cleanTable('test')
 
 console.log({test: listTest()})
