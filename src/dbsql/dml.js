@@ -1,14 +1,16 @@
 import { uuid } from '../dep.js'
 import dql from './dql.js'
 import ddl from './ddl.js'
+import expressionHandler from './expression.js'
+import { utils } from './main.js' 
 
 const main = query => {
 
   const insertTableOne = (
-      tableName
-    , insertData
-    , schemaKeys
-    , needHeader = true
+    tableName
+  , insertData
+  , schemaKeys
+  , needHeader = true
   ) => {
 
     const entries =
@@ -80,29 +82,59 @@ const main = query => {
           )
           .join(',')
         )
+
     :   query(
           insertTableOne(tableName, insertData, schemaKeys)
         )
 
   }
 
-  const deleteFromTableByObjectId = (tableName, ObjectId) =>
+  const deleteTable = (tableName, option) =>
     query(`
       DELETE FROM ${tableName}
       ${
-        ObjectId
-        ? `WHERE objectId = '${ObjectId}'`
+        option?.where
+        ? `WHERE ${expressionHandler(option.where)}`
         : ''
       }
     `)
 
-  const updateFromTableByObjectId = (tableName, ObjectId, newData) => {
+  const cleanTable = (tableName) => {
+    const listTable = dql(query).listTable(tableName)
+    const allObjectKeys = Object.keys(listTable)
+    deleteTable(
+      tableName
+    , {
+        where: {
+          $in: [
+            'objectId'
+          , utils.ArrayIn(allObjectKeys)
+          ]
+        }
+      }
+    )
+  }
+
+  const deleteFromTableByObjectId = (tableName, objectId) =>
+
+    deleteTable(tableName, {
+      where: {
+        $eq: [
+          'objectId'
+        , `'${objectId}'`
+        ]
+      }
+    })
+
+  const updateFromTableByObjectId = (tableName, objectId, newData) => {
+
     const { getFromTableByObjectId } = dql(query)
-    const oldData = getFromTableByObjectId(tableName, ObjectId)
+    const oldData = getFromTableByObjectId(tableName, objectId)
     const _newData = {
       ...oldData
     , ...newData
     }
+
     query(`
       UPDATE ${tableName}
       SET ${
@@ -116,12 +148,15 @@ const main = query => {
         )
         .join(', ')
       }
-      WHERE objectId = '${ObjectId}'
+      WHERE objectId = '${objectId}'
     `)
+
   }
 
   return {
     insertTable
+  , deleteTable
+  , cleanTable
   , deleteFromTableByObjectId
   , updateFromTableByObjectId
   }
