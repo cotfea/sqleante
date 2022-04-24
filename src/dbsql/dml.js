@@ -77,6 +77,7 @@ const main = (query) => {
         $in: ["objectId", utils.ArrayIn(allObjectKeys)],
       },
     });
+    // query(`DELETE FROM ${tableName}}`)
   };
 
   const deleteFromTableByObjectId = (tableName, objectId) =>
