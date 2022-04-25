@@ -171,13 +171,14 @@ const main = query => {
     const { getFromTableByObjectId } = dql(query)
     const oldData = getFromTableByObjectId(tableName, objectId)
     const _newData = {
-      ...oldData
+      ...oldData[objectId]
     , ...newData
     }
 
-    query({
+    return query({
       ns: 'updateFromTableByObjectId'
-    // , ret: objectId
+    , ret: () =>
+        dql(query).getFromTableByObjectId(tableName, objectId)
     , sql: `
         UPDATE ${tableName}
         SET ${
@@ -199,15 +200,17 @@ const main = query => {
 
   const updateTable = (tableName, newDatas) => {
     const entries = Object.entries(newDatas)
-    return {
-      ns: 'updateTable'
-    // , ret: newDatas
-    , sql:
-        entries
-        .map(
-          t => updateFromTableByObjectId(tableName, t[0], t[1])
-        )
-    }
+    return entries
+    .map(
+      t => updateFromTableByObjectId(tableName, t[0], t[1])
+    )
+    .reduce(
+      (r, c) => ({
+        ...r
+      , ...c
+      })
+    , {}
+    )
   }
 
   return {
