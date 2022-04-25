@@ -2,7 +2,7 @@ import ddl from './ddl.js'
 import expressionHandler from './expression.js'
 
 const groupByObjectId = (
-  qryArr, query, tableName, option
+  qryArr, query, tableName, option = {}
 ) => {
 
   const schemaKeys = Object.keys(
@@ -69,82 +69,86 @@ const groupByObjectId = (
 
 const main = query => {
 
-  const listTable = (tableName, option) =>
+  const listTable = (tableName, option = {}) =>
 
     groupByObjectId(
-      query(`
-        SELECT
-        ${
-          option?.select
-          ? Array.isArray(option.select)
-          ? `objectId, ${option.select.join(', ')}`
-          : option?.distinct
-          ? `DISTINCT ${option.select}`
-          : `objectId, ${option.select}`
-          : '*'
-        }
-        FROM ${tableName}
-        ${
-          option?.where
-          ? `WHERE ${expressionHandler(option.where)}`
-          : ''
-        }
-        ${
-          option?.groupBy
-          ? Array.isArray(option.groupBy)
-          ? `GROUP BY ${option.groupBy.join(', ')}`
-          : `GROUP BY ${option.groupBy}`
-          : ``
-        }
-        ${
-          option?.groupBy && option?.having
-          ? `HAVING ${expressionHandler(option.having)}`
-          : ''
-        }
-        ${
-          option?.orderBy
-          ? Array.isArray(option.orderBy)
-          ? `ORDER BY ${option.orderBy.join(', ')}`
-          : `ORDER BY ${option.orderBy}`
-          : ``
-        }
-        ${
-          option?.limit || option?.offset
-          ? `LIMIT ${
-              option?.limit
-              ? option?.limit
-              : 100
-            }`
-          : ''
-        }
-        ${
-          option?.offset && option?.limit
-          ? `OFFSET ${option.offset}`
-          : ''
-        }
-      `)
+      query({
+        ns: 'listTable'
+      , sql: `
+          SELECT
+          ${
+            option?.select
+            ? Array.isArray(option.select)
+            ? `objectId, ${option.select.join(', ')}`
+            : option?.distinct
+            ? `DISTINCT ${option.select}`
+            : `objectId, ${option.select}`
+            : '*'
+          }
+          FROM ${tableName}
+          ${
+            option?.where
+            ? `WHERE ${expressionHandler(option.where)}`
+            : ''
+          }
+          ${
+            option?.groupBy
+            ? Array.isArray(option.groupBy)
+            ? `GROUP BY ${option.groupBy.join(', ')}`
+            : `GROUP BY ${option.groupBy}`
+            : ``
+          }
+          ${
+            option?.groupBy && option?.having
+            ? `HAVING ${expressionHandler(option.having)}`
+            : ''
+          }
+          ${
+            option?.orderBy
+            ? Array.isArray(option.orderBy)
+            ? `ORDER BY ${option.orderBy.join(', ')}`
+            : `ORDER BY ${option.orderBy}`
+            : ``
+          }
+          ${
+            option?.limit || option?.offset
+            ? `LIMIT ${
+                option?.limit
+                ? option?.limit
+                : 100
+              }`
+            : ''
+          }
+          ${
+            option?.offset && option?.limit
+            ? `OFFSET ${option.offset}`
+            : ''
+          }
+        `
+      })
     , query, tableName
     , option
   )
 
-  const getFromTableByObjectId = (tableName, objectId, option) =>
-
+  const getFromTableByObjectId = (tableName, objectId, option = {}) =>
     groupByObjectId(
-      query(`
-        SELECT ${
-          option?.select
-          ? Array.isArray(option.select)
-          ? `objectId, ${option.select.join(', ')}`
-          : `objectId, ${option.select}`
-          : '*'
-        }
-        FROM ${tableName}
-        WHERE objectId = '${objectId}'
-      `)
+      query({
+        ns: 'getFromTableByObjectId'
+      , sql: `
+          SELECT ${
+            option?.select
+            ? Array.isArray(option.select)
+            ? `objectId, ${option.select.join(', ')}`
+            : `objectId, ${option.select}`
+            : '*'
+          }
+          FROM ${tableName}
+          WHERE objectId = '${objectId}'
+        `
+      })
     , query, tableName
     , option
     )
-    [objectId]
 
   return {
     listTable

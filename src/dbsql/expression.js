@@ -1,19 +1,26 @@
 const ops = {
-  'eq': '='
-, 'ne': '<>' // '!='
-, 'lt': '<'
-, 'lte': '<='
-, 'gt': '>'
-, 'gte': '>='
+  eq: '='
+, ne: '<>' // '!='
+, lt: '<'
+, lte: '<='
+, gt: '>'
+, gte: '>='
 
-, 'like': 'LIKE'
-, 'glob': 'GLOB'
-, 'bettwen': 'BETTWEN'
-, 'and': 'AND'
-, 'or': 'OR'
+, like: 'LIKE'
+, glob: 'GLOB'
 
-, 'in': 'IN'
-// , 'not': 'NOT'
+, and: 'AND'
+, or: 'OR'
+
+// , not: 'NOT'
+, in: 'IN'
+, nin: 'NOT IN'
+, exist: 'EXIST'
+, nexist: 'NOT EXIST'
+, between: 'BETWEEN'
+, nbetween: 'NOT BETWEEN'
+, is: 'IS'
+, nis: 'IS NOT'
 }
 
 const checkKey = expression =>
@@ -22,7 +29,8 @@ const checkKey = expression =>
   &&  new RegExp(/^\$/)
       .test(Object.keys(expression)[0])
   &&  Object.keys(ops).includes(
-        Object.keys(expression)[0].replace(/^\$/, '')
+        Object.keys(expression)[0]
+        .replace(/^\$/, '')
       )
   ?   true
   :   false
@@ -40,15 +48,25 @@ const objToArr = obj =>
 const expressionObjToStr = (
   eObj, expressionHandler
 ) =>
-  eObj.v.map(
-    e =>
-      checkKey(e)
-      ? `( ${expressionHandler(e)} )`
+  eObj.v.length === 1
+  ? `${
+      ops[ eObj.k.replace(/^\$/, '') ]
+    } ${
+      checkKey(eObj.v[0])
+      ? `( ${expressionHandler(eObj.v[0])} )`
       : e
-  )
-  .join(` ${ops[
-    eObj.k.replace(/^\$/, '')
-  ]} `)
+    }`
+  : eObj.v.map(
+      e =>
+        checkKey(e)
+        ? [ 'and', 'or' ].includes(eObj.k)
+        ? `( ${expressionHandler(e)} )`
+        : expressionHandler(e)
+        : e
+    )
+    .join(` ${ops[
+      eObj.k.replace(/^\$/, '')
+    ]} `)
 
 const expressionHandler = expression => {
 
@@ -59,7 +77,7 @@ const expressionHandler = expression => {
         return {
           k
         , v: typeof e[k] === 'object'
-          ?  Array.isArray(e[k])
+          ? Array.isArray(e[k])
           ? e[k]
           : objToArr(e[k])
           : []

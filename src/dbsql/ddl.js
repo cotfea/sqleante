@@ -1,9 +1,11 @@
 const main = query => {
 
-  const showDB = () => // sqlite_schema
-    query(`
-      SELECT * FROM sqlite_master
-    `)
+  const showDB = () =>
+    query({
+      ns: 'showDB'
+      // sqlite_schema
+    , sql: 'SELECT * FROM sqlite_master'
+    })
 
   const show = type =>
     showDB().reduce(
@@ -55,27 +57,35 @@ const main = query => {
       objectId: 'TEXT UNIQUE'
     , ...schema
     }
-    return query(`
-      CREATE TABLE IF NOT EXISTS ${tableName} (
-        ${
-          Object.keys(_schema)
-          .reduce(
-            (r, c) => [
-              ...r
-            , `${c} ${_schema[c]}`
-            ]
-          , []
-          )
-          .join(', ')
-        }
-      )
-    `)
+    return query({
+      ns: 'createTable'
+    // , ret: tableName
+    , sql: `
+        CREATE TABLE IF NOT EXISTS ${tableName} (
+          ${
+            Object.keys(_schema)
+            .reduce(
+              (r, c) => [
+                ...r
+              , `${c} ${_schema[c]}`
+              ]
+            , []
+            )
+            .join(', ')
+          }
+        )
+      `
+    })
   }
 
   const dropTable = tableName =>
-    query(`
-      DROP TABLE IF EXISTS ${tableName}
-    `)
+    query({
+      ns: 'dropTable'
+    // , ret: tableName
+    , sql: `
+        DROP TABLE IF EXISTS ${tableName}
+      `
+    })
 
   return {
     showDB

@@ -7,8 +7,8 @@ import query from "./proxyQuery.js";
 import * as utils from "./utils.js";
 export { utils };
 
-export default {
-  ...ddl(query),
-  ...dql(query),
-  ...dml(query),
-};
+export default db => ({
+  ...ddl(query(db))
+, ...dql(query(db))
+, ...dml(query(db))
+})

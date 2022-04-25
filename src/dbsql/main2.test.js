@@ -1,17 +1,19 @@
-import dbsql from "./main.js";
-import { randomInt } from "../../deps.js";
+import dbsql from './main.js'
+import randomInt from 'https://deno.land/std@0.136.0/node/_crypto/randomInt.ts'
+
+import { DB } from '../dep.js'
+const db = new DB("test.db")
+
 const {
-  showDB,
-  show,
-  showSchema,
-  dropTable,
-  listTable,
-  createTable,
-  insertTable,
-  deleteFromTableByObjectId,
-  getFromTableByObjectId,
-  updateFromTableByObjectId,
-} = dbsql;
+  showDB
+, show
+, showSchema
+, dropTable
+, listTable
+, createTable
+, insertTable
+, getFromTableByObjectId
+} = dbsql(db)
 
 console.log(showDB());
 

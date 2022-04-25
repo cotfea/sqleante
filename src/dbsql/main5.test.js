@@ -1,17 +1,21 @@
 import dbsql, { utils } from "./main.js";
 import { randomInt } from "../../deps.js";
 
+import { DB } from '../dep.js'
+const db = new DB("test.db")
+
 const {
-  showDB,
-  show,
-  showSchema,
-  dropTable,
-  listTable,
-  createTable,
-  insertTable,
-  deleteTable,
-  cleanTable,
-} = dbsql;
+  showDB
+, show
+, showSchema
+, dropTable
+, listTable
+, createTable
+, insertTable
+, deleteTable
+, cleanTable
+, updateTable
+} = dbsql(db)
 
 console.log(showDB());
 
@@ -46,12 +50,59 @@ insertDatas.forEach((insertData) => insertTable("test", insertData));
 console.log({ test: listTest() });
 
 const deleteKeys = Object.keys(listTest()).slice(0, 3);
+console.log(123,deleteKeys);
+console.log(124,utils.arrayIn(deleteKeys));
+deleteTable(
+  'test'
+, {
+    where: {
+      $in: [
+        'objectId'
+      , utils.arrayIn(deleteKeys)
+      ]
+    }
+  }
+)
 
-deleteTable("test", {
-  where: {
-    $in: ["objectId", utils.ArrayIn(deleteKeys)],
-  },
-});
+console.log({test: listTest()})
+
+const tableDatas = listTest()
+
+const newTableDatas =
+  Object.keys(tableDatas)
+  .reduce(
+    (r, c) => ({
+      ...r
+    , [c]: {
+        id: tableDatas[c].id + 3
+      , content: `${Number.parseInt(tableDatas[c].content) + 3}`
+      }
+    })
+  , {}
+  )
+
+console.log({newTableDatas})
+
+updateTable('test', newTableDatas)
+
+console.log({test: listTest()})
+
+deleteTable(
+  'test'
+, {
+    where: {
+      $between: [
+        'id'
+      , {
+          $and: [
+            '8'
+          , '10'
+          ]
+        }
+      ]
+    }
+  }
+)
 
 console.log({ test: listTest() });
 
