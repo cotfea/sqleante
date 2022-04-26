@@ -1,135 +1,220 @@
 const insertClasses = ({
   isTableExist
-, listTable
 , insertTable
-}) =>
-  async ctx => {
+, listTable
+}) => async ctx => {
 
-    const { classname } =
-      ctx.params
-    ? ctx.params
-    : { classname: '' }
+  const { classname } =
+    ctx.params
+  ? ctx.params
+  : { classname: '' }
 
-    const reqData = await ctx.request.body({type: 'json'}).value
+  const reqData = await ctx.request.body({type: 'json'}).value
 
-    ctx.response.body =
-      isTableExist(classname)
-    ? (() => {
-        const rawCount = () => Object.keys(listTable(classname)).length
-        const rawCountBefore = rawCount()
-
-        const retData = insertTable(classname, reqData)
-        const rawCountAfter = rawCount()
-
-        return rawCountBefore < rawCountAfter
-        ? {
+  ctx.response.body =
+    isTableExist(classname)
+  ? (() => {
+      const retData = insertTable(classname, reqData)
+      return (
+          typeof retData === 'string'
+      &&  listTable(classname, retData)
+      )
+      ||  reqData.length === Object.keys(retData).length
+      ?   {
             code: 200
           , results: retData
           }
-        : {
+      :   {
             code: 201
           , error: `class ${classname} data insertion failed`
           }
-        })()
-    : {
-        code: 202
-      , error: `class ${classname} is not exist.`
-      }
-  }
+      })()
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
+}
+
+const countClasses = ({
+  isTableExist
+, countTable
+}) => ctx => {
+
+  const { classname } =
+    ctx.params
+  ? ctx.params
+  : { classname: '' }
+
+  ctx.response.body =
+    isTableExist(classname)
+  ? {
+      code: 200
+    , results: countTable(classname)
+    }
+  : {
+      code: 201
+    , error: `class ${classname} is not exist.`
+    }
+
+}
 
 const getClasses = ({
   isTableExist
 , listTable
-}) =>
-  ctx => {
+}) => ctx => {
 
-    const { classname } =
-      ctx.params
-    ? ctx.params
-    : { classname: '' }
+  const { classname } =
+    ctx.params
+  ? ctx.params
+  : { classname: '' }
 
-    ctx.response.body =
-      isTableExist(classname)
-    ? (() => {
-        const r = listTable(classname)
-        const keys = Object.keys(r)
-        return {
-          code: 199
-        , count: Object.keys(r).length
-        , keys          
-        , results: r
-        }
-      })()
-    : {
-        code: 201
-      , error: `class ${classname} is not exist.`
+  ctx.response.body =
+    isTableExist(classname)
+  ? (() => {
+      const r = listTable(classname)
+      const keys = Object.keys(r)
+      return {
+        code: 200
+      , count: Object.keys(r).length
+      , keys          
+      , results: r
       }
-  }
-
-const deleteClasses = ({
-  isTableExist
-, cleanTable
-, listTable
-}) =>
-  ctx => {
-
-    const { classname } =
-      ctx.params
-    ? ctx.params
-    : { classname: '' }
-
-    ctx.response.body =
-      isTableExist(classname)
-    ? (() => {
-        cleanTable(classname)
-        const r = listTable(classname)
-        const keys = Object.keys(r)
-        return {
-          code: 200
-        , count: Object.keys(r).length
-        , keys          
-        , results: r
-        }
-      })()
-    : {
-        code: 202
-      , error: `class ${classname} is not exist.`
-      } 
-  }
+    })()
+  : {
+      code: 201
+    , error: `class ${classname} is not exist.`
+    }
+}
 
 const getClassesByObjectId = ({
   isTableExist
 , getFromTableByObjectId
-}) =>
-  ctx => {
+}) => ctx => {
 
-    const {
-      classname
-    , objectId
-    } =
-      ctx.params
-    ? ctx.params
-    : {
-        classname: ''
-      , objectId: ''
-      }
+  const {
+    classname
+  , objectId
+  } =
+    ctx.params
+  ? ctx.params
+  : {
+      classname: ''
+    , objectId: ''
+    }
 
-    ctx.response.body =
-      isTableExist(classname)
-    ? {
-        code: 200
-      , results: getFromTableByObjectId(classname, objectId)
-      }
-    : {
-        code: 202
-      , error: `class ${classname} is not exist.`
-      }
+  ctx.response.body =
+    isTableExist(classname)
+  ? {
+      code: 200
+    , results: getFromTableByObjectId(classname, objectId)
+    }
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
 
-  }
+}
+
+const cleanClasses = ({
+  isTableExist
+, cleanTable
+}) => ctx => {
+
+  const { classname } =
+    ctx.params
+  ? ctx.params
+  : { classname: '' }
+
+  ctx.response.body =
+    isTableExist(classname)
+  ? {
+      code: 200
+    , results: cleanTable(classname)
+    }
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    } 
+}
+
+const deleteClassesByObjectId = ({
+  isTableExist
+, getFromTableByObjectId
+, deleteFromTableByObjectId 
+}) => ctx => {
+
+  const {
+    classname
+  , objectId
+  } =
+    ctx.params
+  ? ctx.params
+  : {
+      classname: ''
+    , objectId: ''
+    }
+
+  ctx.response.body =
+    isTableExist(classname)
+  ? Object.keys(getFromTableByObjectId(classname, objectId)).length === 0
+  ? {
+      code: 199
+    , error: `${objectId} is node found in ${classname}.`
+    }
+  : (() => {
+      const ret = deleteFromTableByObjectId(classname, objectId)
+      return Array.isArray(ret)
+      && ret.length === 1
+      && ret[0] === objectId
+      ? {
+          code: 200
+        , results: ret[0]
+        }
+      : {
+          code: 201
+        , error: `delete ${objectId} from ${classname} is failed.`
+        }
+    })()
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
+
+}
+
+const deleteClasses = ({
+  isTableExist
+, deleteTable
+}) => async ctx => {
+
+  const { classname } =
+    ctx.params
+  ? ctx.params
+  : { classname: '' }
+
+  const reqData = await ctx.request.body({type: 'json'}).value
+
+  ctx.response.body =
+    isTableExist(classname)
+  ? {
+      code: 200
+    , results: deleteTable(classname, reqData)
+    }
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
+
+}
 
 export {
   insertClasses
-, getClasses
-, deleteClasses
+, countClasses
 , getClassesByObjectId
+, getClasses
+, cleanClasses
+, deleteClassesByObjectId
+, deleteClasses
+// , updateClasses
+// , updateClassesByObjectId
 }

@@ -5,11 +5,11 @@ const db = new DB("test.db")
 
 const {
   showDB
-  ,show
-  ,showSchema
+, show
+, showSchema
   
-  ,createTable
-  ,dropTable
+, createTable
+, dropTable
 } = dbsql(db);
 
 Deno.test({
@@ -52,9 +52,9 @@ Deno.test({
     // 创建一个表
     const createTableRes = createTable("table3", {
       field1: "TEXT"
-      ,field2: "int"
-      ,field3: "NUMERIC"
-      ,field4: "REAL"
+    , field2: "int"
+    , field3: "NUMERIC"
+    , field4: "REAL"
     });
     // console.log(createTableRes); // 新增返回空数组
 

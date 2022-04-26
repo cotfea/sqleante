@@ -4,14 +4,14 @@ import { DB,assertEquals } from "../deps.js";
 const db = new DB("test.db");
 const {
    showSchema
-  ,listTable
+, listTable
 
-  ,insertTable
-  ,updateFromTableByObjectId
-  ,updateTable
-  ,deleteFromTableByObjectId
-  ,deleteTable
-  ,cleanTable
+, insertTable
+, updateFromTableByObjectId
+, updateTable
+, deleteFromTableByObjectId
+, deleteTable
+, cleanTable
 } = dbsql(db);
 
 Deno.test({
@@ -26,9 +26,9 @@ Deno.test({
     //  插入一条数据
     const res = insertTable(tableName, {
       field1: "TEXT2"
-      ,field2: "32"
-      ,field3: 1
-      ,field4: "2022-03-20"
+    , field2: "32"
+    , field3: 1
+    , field4: "2022-03-20"
     });
     // console.log("插入记录的返回值",res); // 返回插入记录的ObjectId
 

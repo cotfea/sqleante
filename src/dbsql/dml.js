@@ -5,10 +5,10 @@ import expressionHandler from "./expression.js";
 
 const main = (query) => {
   const insertTableOne = (
-    tableName,
-    insertData,
-    schemaKeys,
-    needHeader = true
+    tableName
+  , insertData
+  , schemaKeys
+  , needHeader = true
   ) => {
     const entries = Array.isArray(insertData)
       ? {
@@ -112,27 +112,25 @@ const main = (query) => {
     });
   };
 
-  const cleanTable = (tableName) => ({
-    ...deleteTable(tableName),
-    ns: "cleanTable",
-  });
+  const cleanTable = (tableName) =>
+    deleteTable( tableName )
 
-  const deleteFromTableByObjectId = (tableName, objectId) => ({
-    ...deleteTable(tableName, {
+  const deleteFromTableByObjectId = (tableName, objectId) =>
+    deleteTable(tableName, {
       where: {
-        $eq: ["objectId", `'${objectId}'`],
-      },
-    }),
-    ns: "deleteFromTableByObjectId",
-    // , ret: objectId
-  });
+        $eq: [
+          'objectId'
+        , `'${objectId}'`
+        ]
+      }
+    })
 
   const updateFromTableByObjectId = (tableName, objectId, newData) => {
     const { getFromTableByObjectId } = dql(query);
     const oldData = getFromTableByObjectId(tableName, objectId);
     const _newData = {
-      ...oldData[objectId],
-      ...newData,
+      ...oldData[objectId]
+      ,...newData
     };
 
     return query({
@@ -154,20 +152,20 @@ const main = (query) => {
       .map((t) => updateFromTableByObjectId(tableName, t[0], t[1]))
       .reduce(
         (r, c) => ({
-          ...r,
-          ...c,
+          ...r
+        , ...c
         }),
         {}
       );
   };
 
   return {
-    insertTable,
-    deleteTable,
-    cleanTable,
-    deleteFromTableByObjectId,
-    updateFromTableByObjectId,
-    updateTable,
+    insertTable
+  , deleteTable
+  , cleanTable
+  , deleteFromTableByObjectId
+  , updateFromTableByObjectId
+  , updateTable
   };
 };
 

@@ -1,35 +1,40 @@
 import { oak, DB } from "./dep.js";
 import dbsql from "./dbsql/main.js";
 import {
-  getAllSchemas,
-  getTableSchemas,
-  createSchema,
-  deleteSchema,
+   getAllSchemas
+  ,getTableSchemas
+  ,createSchema
+  ,deleteSchema
 } from "./api/schemas.js";
 import {
-  insertClasses,
-  getClasses,
-  deleteClasses,
-  getClassesByObjectId,
-} from "./api/classes.js";
+  insertClasses
+, countClasses
+, getClasses
+, getClassesByObjectId
+, cleanClasses
+, deleteClassesByObjectId
+, deleteClasses
+} from './api/classes.js'
 
 const db = new DB("test.db");
 
 const {
-  showDB,
-  show,
-  showSchema,
-  dropTable,
-  listTable,
-  createTable,
-  insertTable,
-  deleteTable,
-  cleanTable,
-  updateTable,
-  deleteFromTableByObjectId,
-  getFromTableByObjectId,
-  updateFromTableByObjectId,
-} = dbsql(db);
+  showDB
+, show
+, showSchema
+, dropTable
+, createTable
+
+, insertTable
+, countTable
+, listTable
+, getFromTableByObjectId
+, cleanTable
+, deleteTable
+, deleteFromTableByObjectId
+, updateTable
+, updateFromTableByObjectId
+} = dbsql(db)
 
 const isTableExist = (tableName) => show("table").includes(tableName);
 
@@ -67,14 +72,16 @@ const router = new oak.Router()
     })
   )
 
-  .post(
-    "/api/0.1/classes/:classname",
-    insertClasses({
-      isTableExist,
-      listTable,
-      insertTable,
-    })
-  )
+  .post('/api/0.1/classes/:classname', insertClasses({
+    isTableExist
+  , insertTable
+  , listTable
+  }))
+
+  .get('/api/0.1/classes/count/:classname', countClasses({
+    isTableExist
+  , countTable
+  }))
 
   .get(
     "/api/0.1/classes/:classname",
@@ -84,24 +91,28 @@ const router = new oak.Router()
     })
   )
 
-  .delete(
-    "/api/0.1/classes/:classname",
-    deleteClasses({
-      isTableExist,
-      cleanTable,
-      listTable,
-    })
-  )
+  .get('/api/0.1/classes/:classname/:objectId', getClassesByObjectId({
+    isTableExist
+  , getFromTableByObjectId
+  }))
 
-  .get(
-    "/api/0.1/classes/:classname/:objectId",
-    getClassesByObjectId({
-      isTableExist,
-      getFromTableByObjectId,
-    })
-  );
+  .delete('/api/0.1/classes/clean/:classname', cleanClasses({
+    isTableExist
+  , cleanTable
+  }))
 
-const port = 9000;
+  .delete('/api/0.1/classes/:classname/:objectId', deleteClassesByObjectId({
+    isTableExist
+  , getFromTableByObjectId
+  , deleteFromTableByObjectId 
+  }))
+
+  .delete('/api/0.1/classes/:classname', deleteClasses({
+    isTableExist
+  , deleteTable
+  }))
+
+const port = 9000
 
 console.log(`http://localhost:${port}`);
 
