@@ -1,21 +1,18 @@
 import dbsql from "../src/dbsql/main.js";
-import { DB } from '../deps.js'
-import { assertEquals } from "https://deno.land/std@0.136.0/testing/asserts.ts";
+import { DB,assertEquals } from "../deps.js";
 
-const db = new DB("test.db")
+const db = new DB("test.db");
 const {
-  showSchema,
-  listTable,
+   showSchema
+  ,listTable
 
-  insertTable,
-  updateFromTableByObjectId,
-  updateTable,
-  deleteFromTableByObjectId,
-  deleteTable,
-  cleanTable,
- 
+  ,insertTable
+  ,updateFromTableByObjectId
+  ,updateTable
+  ,deleteFromTableByObjectId
+  ,deleteTable
+  ,cleanTable
 } = dbsql(db);
-
 
 Deno.test({
   name: "测试给1个数据表加1条数据(第1个新增的数据表)",
@@ -24,18 +21,18 @@ Deno.test({
 
     // 获取第1个数据表 的表名
     // const tableName =show('table')[0];
-     const tableName =Object.keys(showSchema())[0]
- 
+    const tableName = Object.keys(showSchema())[0];
+
     //  插入一条数据
     const res = insertTable(tableName, {
-      field1: "TEXT3",
-      field2: "2",
-      field3: 0,
-      field4: "2021-11-24",
+      field1: "TEXT2"
+      ,field2: "32"
+      ,field3: 1
+      ,field4: "2022-03-20"
     });
-    console.log("插入记录的返回值",res);
+    // console.log("插入记录的返回值",res); // 返回插入记录的ObjectId
 
-    assertEquals(res.length,18)
+    assertEquals(res.length, 18);
   },
 });
 
@@ -49,20 +46,17 @@ Deno.test({
     const res = listTable(tableName);
     // console.log("这个表的所有数据",res);
 
-    const flag=Object.prototype.toString.call(res) === '[object Object]'
-    assertEquals(flag,true)
+    const flag = Object.prototype.toString.call(res) === "[object Object]";
+    assertEquals(flag, true);
   },
 });
-
 
 Deno.test({
   name: "测试给1个数据表加多条数据(给第1个新增的数据表)",
   fn: () => {
-
     console.log("暂无，通过多个单插入实现");
   },
 });
-
 
 Deno.test({
   name: "测试通过objectId更改对应的1条数据(第1个新增的数据表)",
@@ -72,19 +66,19 @@ Deno.test({
     // 获取第一个数据库数据
     const dataObj = listTable(tableName);
     const keysArr = Object.keys(dataObj);
-    if(keysArr.length){
+    if (keysArr.length) {
       // 得到要更新的数据的objectId
       const ObjectId = Object.keys(listTable(tableName))[0];
       // 更新数据
-      const res = updateFromTableByObjectId(tableName,ObjectId,{
+      const res = updateFromTableByObjectId(tableName, ObjectId, {
         field1: "subline",
         // field4: "2022-02-22",
       });
 
       // console.log("修改数据返回值",res); // 修改数据返回值为undefined
 
-     const updateData= listTable(tableName)[ObjectId]["field1"];
-     assertEquals(updateData,"subline")
+      const updateData = listTable(tableName)[ObjectId]["field1"];
+      assertEquals(updateData, "subline");
     }
   },
 });
@@ -97,25 +91,27 @@ Deno.test({
     // 获取第一个数据库数据
     const dataObj = listTable(tableName);
     const keysArr = Object.keys(dataObj);
-    if(keysArr.length){
+    if (keysArr.length) {
       // 得到要更新的数据的objectId
       // const ObjectId = Object.keys(listTable(tableName))[0];
       const allData = listTable(tableName);
-      const someDatas=Object.fromEntries(Object.entries(allData).slice(0,2))
-      const updateDatas = {}
+      const someDatas = Object.fromEntries(Object.entries(allData).slice(0, 2));
+      const updateDatas = {};
       for (const key in someDatas) {
-        updateDatas[key]={...someDatas[key],"field2":someDatas[key]["field2"]+1000}
+        updateDatas[key] = {
+          ...someDatas[key],
+          field2: someDatas[key]["field2"] + 1000,
+        };
       }
-      // console.log(11,updateDatas);
+      // console.log(11, updateDatas);
 
       // 更新多个数据
-      const res = updateTable(tableName,updateDatas);
-      // console.log(445,res);  // 批量修改数据返回值sql: [ undefined, undefined ]
-      
-      const updateData= listTable(tableName);
-      // console.log("999999",updateData); 
-     assertEquals(res["ns"],"updateTable")
-
+      const res = updateTable(tableName, updateDatas);
+      // console.log(445, res); // 批量修改数据返回 被修改后的那些记录
+      const isSuccess = !!Object.keys(res).length;
+      // const updateData = listTable(tableName);
+      // console.log("999999", updateData);
+      assertEquals(isSuccess, true);
     }
   },
 });
@@ -149,9 +145,9 @@ Deno.test({
 //           },
 //         });
 //       console.log("待更新",res); // 返回被删数据的objectId字符串数组
-  
+
 //       assertEquals(!!res.length,true)
-       
+
 //      console.log("这个表的所有数据", listTable(tableName));
 //   },
 // });

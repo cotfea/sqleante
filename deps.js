@@ -5,3 +5,4 @@ export const uuid = () =>
 export { DB } from "https://deno.land/x/sqlite/mod.ts";
 export * as oak from "https://deno.land/x/oak/mod.ts";
 export { default as randomInt } from "https://deno.land/std@0.136.0/node/_crypto/randomInt.ts";
+export { assertEquals } from "https://deno.land/std@0.136.0/testing/asserts.ts";

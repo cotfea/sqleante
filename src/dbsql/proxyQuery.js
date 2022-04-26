@@ -11,6 +11,8 @@ export default db => sqlRunner => {
 
   // console.log({sql_ret: typeof sqlRunner.ret})
 
+  // console.log(sqlRunner.ns)
+
   const ret = sqlRunner.ret
   ? typeof sqlRunner.ret === 'function'
   ? sqlRunner.ret(queryData)

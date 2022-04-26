@@ -1,15 +1,15 @@
 import dbsql from "../src/dbsql/main.js";
-import { DB } from '../deps.js'
-import { assertEquals } from "https://deno.land/std@0.136.0/testing/asserts.ts";
+import { DB,assertEquals } from '../deps.js'
 
 const db = new DB("test.db")
 
 const {
-  showDB,
-  show,
-  showSchema,
-  createTable,
-  dropTable,
+  showDB
+  ,show
+  ,showSchema
+  
+  ,createTable
+  ,dropTable
 } = dbsql(db);
 
 Deno.test({
@@ -51,10 +51,10 @@ Deno.test({
   fn: () => {
     // 创建一个表
     const createTableRes = createTable("table3", {
-      field1: "TEXT",
-      field2: "int",
-      field3: "NUMERIC",
-      field4: "REAL",
+      field1: "TEXT"
+      ,field2: "int"
+      ,field3: "NUMERIC"
+      ,field4: "REAL"
     });
     // console.log(createTableRes); // 新增返回空数组
 
