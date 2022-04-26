@@ -11,3 +11,5 @@ trash
 .pnpm*
 *.db
 /.deno
+/build
+
