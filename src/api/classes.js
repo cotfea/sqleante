@@ -196,14 +196,10 @@ const deleteClasses = ({
 
   ctx.response.body =
     isTableExist(classname)
-  ? (() => {
-      const ret = deleteTable(classname, reqData)
-      console.log({ret})
-      return {
-        code: 200
-      , results: ret
-      }
-    })()
+  ? {
+      code: 200
+    , results: deleteTable(classname, reqData)
+    }
   : {
       code: 202
     , error: `class ${classname} is not exist.`
