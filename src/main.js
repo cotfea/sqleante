@@ -13,6 +13,7 @@ import {
 , getClassesByObjectId
 , cleanClasses
 , deleteClassesByObjectId
+, deleteClasses
 } from './api/classes.js'
 
 const db = new DB("test.db")
@@ -97,8 +98,10 @@ const router =
   , deleteFromTableByObjectId 
   }))
 
-  // .delete('/api/0.1/classes/:classname', deleteClasses({
-  // }))
+  .delete('/api/0.1/classes/:classname', deleteClasses({
+    isTableExist
+  , deleteTable
+  }))
 
 const port = 9000
 

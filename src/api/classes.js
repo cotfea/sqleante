@@ -182,29 +182,34 @@ const deleteClassesByObjectId = ({
 
 }
 
-// const deleteClasses = ({
-//   isTableExist
-// , deleteTable
-// }) => ctx => {
+const deleteClasses = ({
+  isTableExist
+, deleteTable
+}) => async ctx => {
 
-//   const { classname } =
-//     ctx.params
-//   ? ctx.params
-//   : { classname: '' }
+  const { classname } =
+    ctx.params
+  ? ctx.params
+  : { classname: '' }
 
-//   const reqData = await ctx.request.body({type: 'json'}).value
+  const reqData = await ctx.request.body({type: 'json'}).value
 
-//   ctx.response.body =
-//     isTableExist(classname)
-//   ? (() => {
-//       deleteTable(classname, reqData)
-//     })()
-//   : {
-//       code: 202
-//     , error: `class ${classname} is not exist.`
-//     }
+  ctx.response.body =
+    isTableExist(classname)
+  ? (() => {
+      const ret = deleteTable(classname, reqData)
+      console.log({ret})
+      return {
+        code: 200
+      , results: ret
+      }
+    })()
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
 
-// }
+}
 
 export {
   insertClasses
@@ -213,7 +218,7 @@ export {
 , getClasses
 , cleanClasses
 , deleteClassesByObjectId
-// , deleteClasses
+, deleteClasses
 // , updateClasses
 // , updateClassesByObjectId
 }
