@@ -11,12 +11,15 @@ const groupByObjectId = (
 
   const fields =
     option?.select
-    ? Array.isArray(option.select)
-    ? [ 'objectId', ...option.select ]
-    : option?.distinct
-    ? [ option.select ]
-    : [ 'objectId', option.select ]
-    : schemaKeys
+    ?   Array.isArray(option.select)
+    ?   option.select.length === 1
+    &&  option.select[0] === 'count(*)'
+    ?   option.select
+    :   [ 'objectId', ...option.select ]
+    :   option?.distinct
+    ?   [ option.select ]
+    :   [ 'objectId', option.select ]
+    :   schemaKeys
 
   return Array.isArray(fields)
   &&  fields.length === 1
@@ -78,12 +81,15 @@ const main = query => {
           SELECT
           ${
             option?.select
-            ? Array.isArray(option.select)
-            ? `objectId, ${option.select.join(', ')}`
-            : option?.distinct
-            ? `DISTINCT ${option.select}`
-            : `objectId, ${option.select}`
-            : '*'
+            ?   Array.isArray(option.select)
+            ?   option.select.length === 1
+            &&  option.select[0] === 'count(*)'
+            ?   option.select[0]
+            :   `objectId, ${option.select.join(', ')}`
+            :   option?.distinct
+            ?   `DISTINCT ${option.select}`
+            :   `objectId, ${option.select}`
+            :   '*'
           }
           FROM ${tableName}
           ${
@@ -150,9 +156,19 @@ const main = query => {
     , option
     )
 
+    const countTable = (tableName, option = {}) =>
+      listTable(tableName, {
+        ...option
+      , select: [
+          'count(*)'
+        ]
+      })
+      [0]
+
   return {
     listTable
   , getFromTableByObjectId
+  , countTable
   }
 
 }

@@ -8,9 +8,11 @@ import {
 } from './api/schemas.js'
 import {
   insertClasses
+, countClasses
 , getClasses
-, deleteClasses
 , getClassesByObjectId
+, cleanClasses
+, deleteClassesByObjectId
 } from './api/classes.js'
 
 const db = new DB("test.db")
@@ -20,14 +22,16 @@ const {
 , show
 , showSchema
 , dropTable
-, listTable
 , createTable
+
 , insertTable
-, deleteTable
-, cleanTable
-, updateTable
-, deleteFromTableByObjectId
+, countTable
+, listTable
 , getFromTableByObjectId
+, cleanTable
+, deleteTable
+, deleteFromTableByObjectId
+, updateTable
 , updateFromTableByObjectId
 } = dbsql(db)
 
@@ -63,8 +67,13 @@ const router =
 
   .post('/api/0.1/classes/:classname', insertClasses({
     isTableExist
-  , listTable
   , insertTable
+  , listTable
+  }))
+
+  .get('/api/0.1/classes/count/:classname', countClasses({
+    isTableExist
+  , countTable
   }))
 
   .get('/api/0.1/classes/:classname', getClasses({
@@ -72,16 +81,24 @@ const router =
   , listTable
   }))
 
-  .delete('/api/0.1/classes/:classname', deleteClasses({
-    isTableExist
-  , cleanTable
-  , listTable
-  }))
-
   .get('/api/0.1/classes/:classname/:objectId', getClassesByObjectId({
     isTableExist
   , getFromTableByObjectId
   }))
+
+  .delete('/api/0.1/classes/clean/:classname', cleanClasses({
+    isTableExist
+  , cleanTable
+  }))
+
+  .delete('/api/0.1/classes/:classname/:objectId', deleteClassesByObjectId({
+    isTableExist
+  , getFromTableByObjectId
+  , deleteFromTableByObjectId 
+  }))
+
+  // .delete('/api/0.1/classes/:classname', deleteClasses({
+  // }))
 
 const port = 9000
 

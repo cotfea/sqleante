@@ -148,13 +148,11 @@ const main = query => {
     })
   }
 
-  const cleanTable = (tableName) => ({
-    ...deleteTable( tableName )
-  , ns: 'cleanTable'
-  })
+  const cleanTable = (tableName) =>
+    deleteTable( tableName )
 
-  const deleteFromTableByObjectId = (tableName, objectId) => ({
-    ...deleteTable(tableName, {
+  const deleteFromTableByObjectId = (tableName, objectId) =>
+    deleteTable(tableName, {
       where: {
         $eq: [
           'objectId'
@@ -162,9 +160,6 @@ const main = query => {
         ]
       }
     })
-  , ns: 'deleteFromTableByObjectId'
-  // , ret: objectId
-  })
 
   const updateFromTableByObjectId = (tableName, objectId, newData) => {
 
