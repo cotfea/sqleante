@@ -159,7 +159,7 @@ const deleteClassesByObjectId = ({
   ? Object.keys(getFromTableByObjectId(classname, objectId)).length === 0
   ? {
       code: 199
-    , error: `${objectId} is node found in ${classname}.`
+    , error: `${objectId} is not found in ${classname}.`
     }
   : (() => {
       const ret = deleteFromTableByObjectId(classname, objectId)
@@ -172,7 +172,7 @@ const deleteClassesByObjectId = ({
         }
       : {
           code: 201
-        , error: `delete ${objectId} from ${classname} is failed.`
+        , error: `failed delete ${objectId} from ${classname}.`
         }
     })()
   : {
@@ -207,6 +207,64 @@ const deleteClasses = ({
 
 }
 
+const updateClassesByObjectId = ({
+  isTableExist
+, updateFromTableByObjectId
+}) => async ctx => {
+
+  const {
+    classname
+  , objectId
+  } =
+    ctx.params
+  ? ctx.params
+  : {
+      classname: ''
+    , objectId: ''
+    }
+
+  const reqData = await ctx.request.body({type: 'json'}).value
+
+  ctx.response.body =
+    isTableExist(classname)
+  ? {
+      code: 200
+    , results: updateFromTableByObjectId(classname, objectId, reqData)
+    }
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
+
+}
+
+const updateClasses = ({
+  isTableExist
+, updateTable
+}) => async ctx => {
+
+  const {
+    classname
+  } =
+    ctx.params
+  ? ctx.params
+  : { classname: '' }
+
+  const reqData = await ctx.request.body({type: 'json'}).value
+
+  ctx.response.body =
+    isTableExist(classname)
+  ? {
+      code: 200
+    , results: updateTable(classname, reqData)
+    }
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
+
+}
+
 export {
   insertClasses
 , countClasses
@@ -215,6 +273,6 @@ export {
 , cleanClasses
 , deleteClassesByObjectId
 , deleteClasses
-// , updateClasses
-// , updateClassesByObjectId
+, updateClassesByObjectId
+, updateClasses
 }

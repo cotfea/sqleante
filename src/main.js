@@ -14,6 +14,8 @@ import {
 , cleanClasses
 , deleteClassesByObjectId
 , deleteClasses
+, updateClassesByObjectId
+, updateClasses
 } from './api/classes.js'
 
 const db = new DB("test.db")
@@ -30,10 +32,10 @@ const {
 , listTable
 , getFromTableByObjectId
 , cleanTable
-, deleteTable
 , deleteFromTableByObjectId
-, updateTable
+, deleteTable
 , updateFromTableByObjectId
+, updateTable
 } = dbsql(db)
 
 const isTableExist = tableName =>
@@ -102,6 +104,22 @@ const router =
     isTableExist
   , deleteTable
   }))
+
+  .put(
+    '/api/0.1/classes/:classname/:objectId'
+  , updateClassesByObjectId({
+      isTableExist
+    , updateFromTableByObjectId
+    })
+  )
+
+  .put(
+    '/api/0.1/classes/:classname'
+  , updateClasses({
+      isTableExist
+    , updateTable
+    })
+  )
 
 const port = 9000
 
