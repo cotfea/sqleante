@@ -23,6 +23,40 @@ podman run --rm -ti \
 deno run  -A ./src/main.js
 ```
 
+## build
+
+```sh
+rm -rf ./build
+mkdir -p ./build
+deno bundle ./src/main.js ./build/bundle.js
+deno compile --allow-net --allow-read --allow-write \
+  -o ./build/sqleante ./build/bundle.js
+```
+
+## build-image
+
+```sh
+buildah bud --no-cache -t mooxe/sqleate
+```
+
+## run-image
+
+```sh
+podman run --rm --name sqleate \
+  -p 9000:9000 \
+  localhost/mooxe/sqleate
+```
+
+## image-tag-push
+
+```sh
+podman tag localhost/mooxe/sqleate ccr.ccs.tencentyun.com/mooxe/sqleate
+podman push ccr.ccs.tencentyun.com/mooxe/sqleate
+podman tag localhost/mooxe/sqleate ccr.ccs.tencentyun.com/mooxe/sqleate:`date +%y%m%d%H%M`
+podman push ccr.ccs.tencentyun.com/mooxe/sqleate:`date +%y%m%d%H%M`
+```
+
+----
 
 ## deno cache
 
