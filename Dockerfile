@@ -18,4 +18,4 @@ EXPOSE \
   9000
 
 CMD \
-  [ "/root/deno/sqleante" ]
+  [ "/root/deno/sqleante", "/tmp/sqleante/sqleante.db" ]
