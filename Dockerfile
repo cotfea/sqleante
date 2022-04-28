@@ -11,6 +11,9 @@ ENV \
 COPY \
   ./build/sqleante /root/deno/sqleante
 
+COPY \
+  ./start.sh /root/deno/start.sh
+
 ENV \
   DENO_DIR=/tmp/deno-dir
 
@@ -18,4 +21,4 @@ EXPOSE \
   9000
 
 CMD \
-  [ "/root/deno/sqleante", "/tmp/sqleante/sqleante.db" ]
+  [ "/root/deno/start.sh" ]

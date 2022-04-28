@@ -45,7 +45,7 @@ buildah bud --no-cache -t mooxe/sqleante
 podman run --rm --name sqleante \
   -p 9000:9000 \
   -v ./build:/tmp/sqleante \
-  --read-only -v /tmp:/tmp \
+  --read-only -v /tmp/newtmp:/tmp \
   localhost/mooxe/sqleante
 ```
 
