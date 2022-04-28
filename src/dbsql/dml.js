@@ -1,150 +1,121 @@
-import { uuid } from '../dep.js'
-import dql from './dql.js'
-import ddl from './ddl.js'
-import expressionHandler from './expression.js'
+import { uuid } from "../dep.js";
+import dql from "./dql.js";
+import ddl from "./ddl.js";
+import expressionHandler from "./expression.js";
 
-const main = query => {
-
+const main = (query) => {
   const insertTableOne = (
     tableName
   , insertData
   , schemaKeys
   , needHeader = true
   ) => {
-
-    const entries =
-      Array.isArray(insertData)
+    const entries = Array.isArray(insertData)
       ? {
-          keys: schemaKeys
-        , values: insertData
+          keys: schemaKeys,
+          values: insertData,
         }
       : {
-          keys: Object.keys(insertData)
-        , values: Object.values(insertData)
-        }
+          keys: Object.keys(insertData),
+          values: Object.values(insertData),
+        };
 
     const _uuid = uuid()
+    const _createdAt = new Date().toJSON()
+    // const _createdAt = new Date().toJSON().replace(/[TZ]/g," ").trim()
+    const _updatedAt = _createdAt
 
     return {
-      ret: _uuid
-    , sql: `
+      ret: _uuid,
+      sql: `
         ${
           needHeader
-          ? `
+            ? `
             INSERT INTO ${tableName}
             (
               objectId
-            , ${entries.keys.join(', ')}
+            , ${entries.keys.join(", ")}
+            , createdAt
+            , updatedAt
             )
             VALUES
           `
-          : ''
+            : ""
         }
         (
           '${_uuid}'
-        , ${
-            entries.values
-            .map(t => `'${t}'`)
-            .join(', ')
-          }
+        , ${entries.values.map((t) => `'${t}'`).join(", ")}
+        , '${_createdAt}'
+        , '${_updatedAt}'
         )
-      `
-    }
-  }
+      `,
+    };
+  };
 
   const insertTable = (tableName, insertData) => {
+    // const schema = ddl(query).showSchema(tableName);
+    // const schemaKeys = Object.keys(schema).filter((t) =>
+    //   schema[t] === "INTEGER PRIMARY KEY" || t === "objectId" ? false : true
+    // );
 
     const schema = ddl(query).showSchema(tableName)
 
-    const schemaKeys = Object.keys( schema )
-    .filter(
-      t =>
-            schema[t] === 'INTEGER PRIMARY KEY'
-        ||  t === 'objectId'
-        ?   false
-        :   true
+    const schemaKeys = Object.keys(schema).filter((t) =>
+      schema[t] === "INTEGER PRIMARY KEY" || t === "objectId" ? false : true
     )
 
-    return Array.isArray(insertData)
-    &&  insertData.reduce(
-          (r, c) =>
-                r === true
-            ||  Array.isArray(c)
-            ||  typeof c === 'object'
-            ?   true
-            :   r
-        , false
-        )
-
-    ?   query(
-          insertData.map(
-            (t, i) => insertTableOne(
-              tableName, t, schemaKeys
-            ,   i === 0
-              ? true
-              : false
+    return Array.isArray(insertData) &&
+      insertData.reduce(
+        (r, c) =>
+          r === true || Array.isArray(c) || typeof c === "object" ? true : r,
+        false
+      )
+      ? query(
+          insertData
+            .map((t, i) =>
+              insertTableOne(tableName, t, schemaKeys, i === 0 ? true : false)
             )
-          )
-          .reduce(
-            (r, c, i) => ({
-              ns: r.ns
-            , ret: [
-                ...r.ret
-              , c.ret
-              ]
-            , sql: `
+            .reduce(
+              (r, c, i) => ({
+                ns: r.ns,
+                ret: [...r.ret, c.ret],
+                sql: `
                 ${r.sql}
-                ${
-                  i === 0
-                ? ''
-                : ','
-                } ${
-                  c.sql
-                }
-              `
-            })
-          , {
-              ns: 'insertTable'
-            , ret: []
-            , sql: ''
-            }
-          )
+                ${i === 0 ? "" : ","} ${c.sql}
+              `,
+              }),
+              {
+                ns: "insertTable",
+                ret: [],
+                sql: "",
+              }
+            )
         )
-
-    :   query({
-          ...insertTableOne(tableName, insertData, schemaKeys)
-        , ns: 'insertTable'
+      : query({
+          ...insertTableOne(tableName, insertData, schemaKeys),
+          ns: "insertTable",
         })
-
   }
 
   const deleteTable = (tableName, option = {}) => {
-
     const limitDefault = 1000
     const _option =
       option?.limit <= limitDefault
-    ? option.limit
-    : {
-        ...option
-      , limit: limitDefault
-      }
+        ? option.limit
+        : {
+            ...option,
+            limit: limitDefault,
+          }
 
-    const deleteData =
-      Object.keys(
-        dql(query).listTable(tableName, _option)
-      )
+    const deleteData = Object.keys(dql(query).listTable(tableName, _option))
 
     return query({
-      ns: 'deleteTable'
-    , ret: deleteData
-    , sql: `
+      ns: "deleteTable",
+      ret: deleteData,
+      sql: `
         DELETE FROM ${tableName}
-        ${
-          option?.where
-          ? `WHERE ${expressionHandler(_option.where)}`
-          : ''
-        }
-      `
+        ${option?.where ? `WHERE ${expressionHandler(_option.where)}` : ""}
+      `,
     })
   }
 
@@ -162,50 +133,39 @@ const main = query => {
     })
 
   const updateFromTableByObjectId = (tableName, objectId, newData) => {
-
     const { getFromTableByObjectId } = dql(query)
     const oldData = getFromTableByObjectId(tableName, objectId)
+    const _updatedAt = new Date().toJSON()
     const _newData = {
       ...oldData[objectId]
     , ...newData
+    , updatedAt:_updatedAt
     }
 
     return query({
-      ns: 'updateFromTableByObjectId'
-    , ret: () =>
-        dql(query).getFromTableByObjectId(tableName, objectId)
-    , sql: `
+      ns: "updateFromTableByObjectId",
+      ret: () => dql(query).getFromTableByObjectId(tableName, objectId),
+      sql: `
         UPDATE ${tableName}
-        SET ${
-          Object.entries(_newData)
-          .reduce(
-            (r, c) => [
-              ...r
-            , `${c[0]} = '${c[1]}'`
-            ]
-          , []
-          )
-          .join(', ')
-        }
+        SET ${Object.entries(_newData)
+          .reduce((r, c) => [...r, `${c[0]} = '${c[1]}'`], [])
+          .join(", ")}
         WHERE objectId = '${objectId}'
-      `
+      `,
     })
-
   }
 
   const updateTable = (tableName, newDatas) => {
     const entries = Object.entries(newDatas)
     return entries
-    .map(
-      t => updateFromTableByObjectId(tableName, t[0], t[1])
-    )
-    .reduce(
-      (r, c) => ({
-        ...r
-      , ...c
-      })
-    , {}
-    )
+      .map((t) => updateFromTableByObjectId(tableName, t[0], t[1]))
+      .reduce(
+        (r, c) => ({
+          ...r
+        , ...c
+        }),
+        {}
+      )
   }
 
   return {
@@ -216,7 +176,6 @@ const main = query => {
   , updateFromTableByObjectId
   , updateTable
   }
-
 }
 
-export default query => main(query)
+export default (query) => main(query)

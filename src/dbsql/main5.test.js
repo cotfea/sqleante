@@ -1,5 +1,5 @@
-import dbsql, { utils } from './main.js'
-import randomInt from 'https://deno.land/std@0.136.0/node/_crypto/randomInt.ts'
+import dbsql, { utils } from "./main.js";
+import { randomInt } from "../../deps.js";
 
 import { DB } from '../dep.js'
 const db = new DB("test.db")
@@ -17,56 +17,41 @@ const {
 , updateTable
 } = dbsql(db)
 
-console.log(showDB())
+console.log(showDB());
 
-const showTables = () => show('table')
+const showTables = () => show("table");
 
-console.log({tables: showTables()})
+console.log({ tables: showTables() });
 
-showTables().forEach(
-  t => dropTable(t)
-)
+showTables().forEach((t) => dropTable(t));
 
-console.log({tables: showTables()})
+console.log({ tables: showTables() });
 
-createTable(
-  'test'
-, {
-    id: 'INT'
-  , content: 'TEXT'
-  }
-)
+createTable("test", {
+  id: "INT",
+  content: "TEXT",
+});
 
-console.log({tables: showTables()})
+console.log({ tables: showTables() });
 
-console.log(showSchema())
+console.log(showSchema());
 
-const listTest = option => listTable('test', option)
+const listTest = (option) => listTable("test", option);
 
-console.log({test: listTest()})
+console.log({ test: listTest() });
 
-const insertDatas = 
-new Array(10).fill(0)
-.map(
-  (t, i) => ({
-    id: i + 1
-  , content: randomInt(10)
-  })
-)
+const insertDatas = new Array(10).fill(0).map((t, i) => ({
+  id: i + 1,
+  content: randomInt(10),
+}));
 
-insertDatas
-.forEach(
-  insertData =>
-    insertTable('test', insertData)
-)
+insertDatas.forEach((insertData) => insertTable("test", insertData));
 
-console.log({test: listTest()})
+console.log({ test: listTest() });
 
-const deleteKeys = (
-  Object.keys(listTest())
-  .slice(0, 3)
-)
-
+const deleteKeys = Object.keys(listTest()).slice(0, 3);
+console.log(123,deleteKeys);
+console.log(124,utils.arrayIn(deleteKeys));
 deleteTable(
   'test'
 , {
@@ -119,8 +104,8 @@ deleteTable(
   }
 )
 
-console.log({test: listTest()})
+console.log({ test: listTest() });
 
-cleanTable('test')
+cleanTable("test");
 
-console.log({test: listTest()})
+console.log({ test: listTest() });
