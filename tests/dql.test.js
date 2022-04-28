@@ -6,8 +6,8 @@ const db = new DB("test.db")
 const { showSchema, listTable, getFromTableByObjectId } = dbsql(db)
 
 Deno.test({
-  name: "测试打印1个数据表的所有数据(第1个新增的数据表)",
-  fn: () => {
+  name: "测试打印1个数据表的所有数据(第1个新增的数据表)"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -21,8 +21,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试通过objectId获取对应的1条数据",
-  fn: () => {
+  name: "测试通过objectId获取对应的1条数据"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
     // 获取这个表第1条数据的id
@@ -36,8 +36,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试获取部分字段的记录",
-  fn: () => {
+  name: "测试获取部分字段的记录"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -51,8 +51,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 groupBy",
-  fn: () => {
+  name: "测试 groupBy"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -66,8 +66,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 sum",
-  fn: () => {
+  name: "测试 sum"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -81,8 +81,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 limit offset",
-  fn: () => {
+  name: "测试 limit offset"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -100,8 +100,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 orderBy排序",
-  fn: () => {
+  name: "测试 orderBy排序"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -118,8 +118,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 where 比较运算符",
-  fn: () => {
+  name: "测试 where 比较运算符"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -135,8 +135,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 count",
-  fn: () => {
+  name: "测试 count"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -153,8 +153,8 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 as别名",
-  fn: () => {
+  name: "测试 as别名"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
@@ -170,17 +170,20 @@ Deno.test({
 })
 
 Deno.test({
-  name: "测试 having",
-  fn: () => {
+  name: "测试 having"
+  , fn: () => {
     // 获取第1个新增的表名
     const tableName = Object.keys(showSchema())[0]
 
     // 多条件排序
     const res = listTable(tableName, {
-      select: ["field1", "field2"],
-      groupBy: "field1",
-      having: {
-        $lt: ["count(field1)", 2]
+      select: ["field1", "field2"]
+    , groupBy: "field1"
+    , having: {
+        $lt: [
+          "count(field1)"
+        , 2
+        ]
       }
     })
 

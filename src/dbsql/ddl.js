@@ -55,7 +55,9 @@ const main = query => {
   const createTable = (tableName, schema) => {
     const _schema = {
       objectId: 'TEXT UNIQUE'
-    , ...schema
+    ,  ...schema
+    , createdAt: 'TEXT'
+    , updatedAt: 'TEXT'
     }
     return query({
       ns: 'createTable'
