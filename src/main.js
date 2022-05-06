@@ -41,7 +41,7 @@ app.addEventListener(
 )
 
 const Start = async (
-  dbfile = './sqleate.db'
+  dbfile = './sqleante.db'
 , port = 9000
 ) => {
 

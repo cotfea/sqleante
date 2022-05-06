@@ -1,5 +1,5 @@
 import ddl from './ddl.js'
-import expressionHandler from './expression.js'
+import expressionHandler from './ts/expression.esm.js'
 
 const groupByObjectId = (
   qryArr, query, tableName, option = {}
