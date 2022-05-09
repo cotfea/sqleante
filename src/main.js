@@ -1,140 +1,62 @@
-import { oak, DB } from "./dep.js";
-import dbsql from "./dbsql/main.js";
-import {
-   getAllSchemas
-  ,getTableSchemas
-  ,createSchema
-  ,deleteSchema
-} from "./api/schemas.js";
-import {
-  insertClasses
-, countClasses
-, getClasses
-, getClassesByObjectId
-, cleanClasses
-, deleteClassesByObjectId
-, deleteClasses
-, updateClassesByObjectId
-, updateClasses
-} from './api/classes.js'
+import { oak, DB, Command } from './dep.js'
+import Router from './router.js'
 
-const db = new DB("test.db");
+const controller = new AbortController()
+const { signal } = controller
 
-const {
-  showDB
-, show
-, showSchema
-, dropTable
-, createTable
+const global = {}
 
-, insertTable
-, countTable
-, listTable
-, getFromTableByObjectId
-, cleanTable
-, deleteFromTableByObjectId
-, deleteTable
-, updateFromTableByObjectId
-, updateTable
-} = dbsql(db)
+const { args } = await new Command()
 
-const isTableExist = (tableName) => show("table").includes(tableName);
+.name('sqleante-cli')
+.version('0.0.1')
 
-const router = new oak.Router()
+.description(
+  'BaaS DB Sqleate like LeanCloud DB Service.'
+)
 
-  .get("/", (ctx) => {
-    ctx.response.body = "Hello Sqleante!!!";
-  })
+.arguments("[file]")
 
-  .get("/api/0.1/schemas", getAllSchemas({ showSchema }))
+.parse(Deno.args)
 
-  .get(
-    "/api/0.1/schemas/:classname",
-    getTableSchemas({
-      isTableExist,
-      showSchema,
-    })
-  )
+const [ dbfile ] = args
 
-  .post(
-    "/api/0.1/schemas/:classname",
-    createSchema({
-      isTableExist,
-      createTable,
-      showSchema,
-    })
-  )
+const app = new oak.Application()
 
-  .delete(
-    "/api/0.1/schemas/:classname",
-    deleteSchema({
-      isTableExist,
-      dropTable,
-      showSchema,
-    })
-  )
+app.addEventListener(
+  'listen'
+, ({ hostname, port, secure }) => {
+    console.log(
+      `Listening on: ${"http://"}${
+        hostname ??  "localhost"
+      }:${port}`
+    )
+  }
+)
 
-  .post('/api/0.1/classes/:classname', insertClasses({
-    isTableExist
-  , insertTable
-  , listTable
-  }))
+app.addEventListener(
+  'error', (evt) => {
+    console.log(evt.error)
+  }
+)
 
-  .get('/api/0.1/classes/count/:classname', countClasses({
-    isTableExist
-  , countTable
-  }))
+const Start = async (
+  dbfile = './sqleante.db'
+, port = 9000
+) => {
 
-  .get(
-    "/api/0.1/classes/:classname",
-    getClasses({
-      isTableExist,
-      listTable,
-    })
-  )
+  global.db = new DB(dbfile)
+  const router = Router(oak.Router, global.db)
 
-  .get('/api/0.1/classes/:classname/:objectId', getClassesByObjectId({
-    isTableExist
-  , getFromTableByObjectId
-  }))
-
-  .delete('/api/0.1/classes/clean/:classname', cleanClasses({
-    isTableExist
-  , cleanTable
-  }))
-
-  .delete('/api/0.1/classes/:classname/:objectId', deleteClassesByObjectId({
-    isTableExist
-  , getFromTableByObjectId
-  , deleteFromTableByObjectId 
-  }))
-
-  .delete('/api/0.1/classes/:classname', deleteClasses({
-    isTableExist
-  , deleteTable
-  }))
-
-  .put(
-    '/api/0.1/classes/:classname/:objectId'
-  , updateClassesByObjectId({
-      isTableExist
-    , updateFromTableByObjectId
-    })
-  )
-
-  .put(
-    '/api/0.1/classes/:classname'
-  , updateClasses({
-      isTableExist
-    , updateTable
-    })
-  )
-
-const port = 9000
-
-console.log(`http://localhost:${port}`);
-
-await new oak.Application()
+  global.listenPromise = app
   .use(router.routes())
   .use(router.allowedMethods())
-  .listen({ port });
+  .listen({ port }, signal)
+
+  controller.abort()
+
+  await global.listenPromise
+
+}
+
+await Start(dbfile)

@@ -1,15 +1,17 @@
 import { uuid } from "../dep.js";
 import dql from "./dql.js";
 import ddl from "./ddl.js";
-import expressionHandler from "./expression.js";
+import expressionHandler from "./expression.ts";
 
 const main = (query) => {
+
   const insertTableOne = (
     tableName
   , insertData
   , schemaKeys
   , needHeader = true
   ) => {
+
     const entries = Array.isArray(insertData)
       ? {
           keys: schemaKeys,
@@ -30,17 +32,17 @@ const main = (query) => {
       sql: `
         ${
           needHeader
-            ? `
-            INSERT INTO ${tableName}
-            (
-              objectId
-            , ${entries.keys.join(", ")}
-            , createdAt
-            , updatedAt
-            )
-            VALUES
+        ? `
+          INSERT INTO ${tableName}
+          (
+            objectId
+          , ${entries.keys.join(", ")}
+          , createdAt
+          , updatedAt
+          )
+          VALUES
           `
-            : ""
+        : ""
         }
         (
           '${_uuid}'
@@ -53,6 +55,7 @@ const main = (query) => {
   };
 
   const insertTable = (tableName, insertData) => {
+
     // const schema = ddl(query).showSchema(tableName);
     // const schemaKeys = Object.keys(schema).filter((t) =>
     //   schema[t] === "INTEGER PRIMARY KEY" || t === "objectId" ? false : true
@@ -61,7 +64,11 @@ const main = (query) => {
     const schema = ddl(query).showSchema(tableName)
 
     const schemaKeys = Object.keys(schema).filter((t) =>
-      schema[t] === "INTEGER PRIMARY KEY" || t === "objectId" ? false : true
+        schema[t] === "INTEGER PRIMARY KEY"
+    ||  t === "objectId"
+    ||  t === "createdAt"
+    ||  t === "updatedAt"
+    ? false : true
     )
 
     return Array.isArray(insertData) &&

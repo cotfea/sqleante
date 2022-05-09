@@ -36,24 +36,26 @@ deno compile --allow-net --allow-read --allow-write \
 ## build-image
 
 ```sh
-buildah bud --no-cache -t mooxe/sqleate
+buildah bud --no-cache -t mooxe/sqleante
 ```
 
 ## run-image
 
 ```sh
-podman run --rm --name sqleate \
+podman run --rm --name sqleante \
   -p 9000:9000 \
-  localhost/mooxe/sqleate
+  -v ./build:/tmp/sqleante \
+  --read-only -v /tmp/newtmp:/tmp \
+  localhost/mooxe/sqleante
 ```
 
 ## image-tag-push
 
 ```sh
-podman tag localhost/mooxe/sqleate ccr.ccs.tencentyun.com/mooxe/sqleate
-podman push ccr.ccs.tencentyun.com/mooxe/sqleate
-podman tag localhost/mooxe/sqleate ccr.ccs.tencentyun.com/mooxe/sqleate:`date +%y%m%d%H%M`
-podman push ccr.ccs.tencentyun.com/mooxe/sqleate:`date +%y%m%d%H%M`
+podman tag localhost/mooxe/sqleante ccr.ccs.tencentyun.com/mooxe/sqleante
+podman push ccr.ccs.tencentyun.com/mooxe/sqleante
+podman tag localhost/mooxe/sqleante ccr.ccs.tencentyun.com/mooxe/sqleante:`date +%y%m%d%H%M`
+podman push ccr.ccs.tencentyun.com/mooxe/sqleante:`date +%y%m%d%H%M`
 ```
 
 ----
