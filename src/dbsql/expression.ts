@@ -76,10 +76,10 @@ const expressionObjToStr = (
   ? `${
       ops[ eObj.k.replace(/^\$/, '') ]
     } ${
-      checkKey(eObj.v[0] as Expression)
+      checkKey(eObj.v[0])
       ? `( ${
           expressionHandler(
-            eObj.v[0] as Expression
+            eObj.v[0]
           )
         } )`
       : eObj.v[0]

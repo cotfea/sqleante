@@ -1,7 +1,7 @@
 import { uuid } from "../dep.js";
 import dql from "./dql.js";
 import ddl from "./ddl.js";
-import expressionHandler from "./ts/expression.esm.js";
+import expressionHandler from "./expression.ts";
 
 const main = (query) => {
 
