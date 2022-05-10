@@ -24,7 +24,6 @@ const main = (query) => {
 
     const _uuid = uuid()
     const _createdAt = new Date().toJSON()
-    // const _createdAt = new Date().toJSON().replace(/[TZ]/g," ").trim()
     const _updatedAt = _createdAt
 
     return {
@@ -54,6 +53,7 @@ const main = (query) => {
     };
   };
 
+  // 插入一条或多条数据
   const insertTable = (tableName, insertData) => {
 
     // const schema = ddl(query).showSchema(tableName);
@@ -104,6 +104,7 @@ const main = (query) => {
         })
   }
 
+  // 删除指定条件的数据
   const deleteTable = (tableName, option = {}) => {
     const limitDefault = 1000
     const _option =
@@ -126,19 +127,22 @@ const main = (query) => {
     })
   }
 
+  // 清空表数据
   const cleanTable = (tableName) =>
     deleteTable( tableName )
 
+  // 删除指定id的那条数据
   const deleteFromTableByObjectId = (tableName, objectId) =>
-    deleteTable(tableName, {
-      where: {
-        $eq: [
-          'objectId'
+  deleteTable(tableName, {
+    where: {
+      $eq: [
+        'objectId'
         , `'${objectId}'`
-        ]
-      }
-    })
+      ]
+    }
+  })
 
+  // 更改指定id的那条数据
   const updateFromTableByObjectId = (tableName, objectId, newData) => {
     const { getFromTableByObjectId } = dql(query)
     const oldData = getFromTableByObjectId(tableName, objectId)
@@ -162,6 +166,7 @@ const main = (query) => {
     })
   }
 
+  // 更改多条数据
   const updateTable = (tableName, newDatas) => {
     const entries = Object.entries(newDatas)
     return entries

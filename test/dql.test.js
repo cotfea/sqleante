@@ -1,9 +1,7 @@
 import dbsql from "../src/dbsql/main.js"
-import { DB,assertEquals } from "../deps.js"
+import { db,assertEquals } from "../deps.js"
 
-const db = new DB("test.db")
-
-const { showSchema, listTable, getFromTableByObjectId } = dbsql(db)
+const { showSchema, listTable, getFromTableByObjectId, countTable } = dbsql(db)
 
 Deno.test({
   name: "测试打印1个数据表的所有数据(第1个新增的数据表)"
@@ -19,6 +17,20 @@ Deno.test({
     assertEquals(isObj, true)
   }
 })
+Deno.test({
+  name: "测试打印1个数据表的总数据量"
+  , fn: () => {
+    // 获取第1个新增的表名
+    const tableName = Object.keys(showSchema())[0]
+
+    // 获取这个表所有数据
+    const res = countTable(tableName)
+    // console.log("查询结果0999",res);
+    const isObj = res >= 0
+
+    assertEquals(isObj, true)
+  }
+})
 
 Deno.test({
   name: "测试通过objectId获取对应的1条数据"
@@ -27,7 +39,6 @@ Deno.test({
     const tableName = Object.keys(showSchema())[0]
     // 获取这个表第1条数据的id
     const ObjectId = Object.keys(listTable(tableName))[0]
-
     // 获取这个表的第1条数据
     const res = getFromTableByObjectId(tableName, ObjectId)
     const len = Object.keys(res).length > 0
@@ -90,10 +101,10 @@ Deno.test({
     const res = listTable(tableName, {
       select: ["field1", "field2"],
       limit: 4,
-      offset: 1
+      offset: 0
     })
 
-    // console.log("查询结果",res);
+    // console.log("查询结果limit offse",res);
     const len = Object.keys(res).length > 0
     assertEquals(len, true)
   }
@@ -125,10 +136,10 @@ Deno.test({
 
     // 多条件排序
     const res = listTable(tableName, {
-      where: { $lt: ["field2", 100] }
+      where: { $lt: ["field3", 100] }
     })
 
-    // console.log("查询结果", res)
+    // console.log("查询结果 where", res)
     const len = Object.keys(res).length > 0
     assertEquals(len, true)
   }

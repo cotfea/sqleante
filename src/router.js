@@ -22,8 +22,7 @@ import {
 const Router = (router, db) => {
 
   const {
-    showDB
-  , show
+    show
   , showSchema
   , dropTable
   , createTable
@@ -58,7 +57,7 @@ const Router = (router, db) => {
   .post('/api/0.1/schemas/:classname', createSchema({
     isTableExist
   , createTable
-  , showSchema 
+  , showSchema
   }))
 
   .delete('/api/0.1/schemas/:classname', deleteSchema({
@@ -96,7 +95,7 @@ const Router = (router, db) => {
   .delete('/api/0.1/classes/:classname/:objectId', deleteClassesByObjectId({
     isTableExist
   , getFromTableByObjectId
-  , deleteFromTableByObjectId 
+  , deleteFromTableByObjectId
   }))
 
   .delete('/api/0.1/classes/:classname', deleteClasses({
@@ -121,5 +120,5 @@ const Router = (router, db) => {
   )
 
 }
-  
+
 export default Router

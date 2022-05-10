@@ -36,28 +36,33 @@ const createSchema = ({
 , createTable
 , showSchema
 }) =>
-  async ctx => {
+async (ctx) => {
 
     const { classname } =
       ctx.params
     ? ctx.params
     : { classname: '' }
-
     const reqData = await ctx.request.body({type: 'json'}).value
-
-    createTable(classname, reqData)
-
+    
     ctx.response.body =
-      isTableExist(classname)
-    ? {
-        code: 200
-      , results: showSchema(classname)
-      }
+      !isTableExist(classname)
+    ? ( () => {
+        createTable(classname, reqData)
+    
+        return isTableExist(classname)
+        ? {
+            code: 200
+          , results: showSchema(classname)
+          }
+        : {
+            code: 201
+          , error: `class ${classname} creation failed.`
+          }
+      })()
     : {
-        code: 201
-      , error: `class ${classname} creation failed.`
+        code: 202
+      , error: `class ${classname} is already exists.`
       }
-
   }
 
 const deleteSchema = ({
@@ -71,17 +76,24 @@ const deleteSchema = ({
     ? ctx.params
     : { classname: '' }
 
-    dropTable(classname)
-
     ctx.response.body =
-      !isTableExist(classname)
-    ? {
-        code: 200
-      , results: showSchema(classname)
-      }
+      isTableExist(classname)
+    ? (() => {
+        const schema = showSchema(classname)
+        dropTable(classname)
+        return !isTableExist(classname)
+        ? {
+            code: 200
+          , results: schema
+          }
+        : {
+            code: 201
+          , error: `class ${classname} deletion failed.`
+          }
+      })()
     : {
-        code: 201
-      , error: `class ${classname} deletion failed.`
+        code: 202
+      , error: `class ${classname} is not exist.`
       }
 
   }
