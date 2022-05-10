@@ -24,9 +24,10 @@ const cleanTable = () => {
   showTables()
   .forEach(
     t => dropTable(t)
-  )
-}
-
+    )
+  }
+  
+// 删除所有表
 cleanTable()
 
 const tableName = 'user'
@@ -48,6 +49,7 @@ const userData = [
 
 const tableData = () => listTable(tableName)
 
+// 创建一个表
 createTable(
   tableName
 , defSchema
@@ -56,17 +58,19 @@ createTable(
 Deno.test(
   'create Table'
 , () => {
-
+    // 查表名
     assertEquals(
       showTables()
     , [ tableName ]
     )
 
+    // 查表索引
     assertEquals(
       new RegExp(`^sqlite_autoindex_${tableName}`).test(showIndexs()[0])
     , true
     )
-
+    
+    // 查表结构
     assertEquals(
       showSchema()
     , {
@@ -78,20 +82,24 @@ Deno.test(
         }
       }
     )
-
+  
+    // 查表数据
     assertEquals(
       listTable(tableName)
     , {}
     )
 
+    // 用户表批量插入数据
     userData
     .forEach(
       insertData =>
         insertTable(tableName, insertData)
     )
 
+    // 获取(用户)表数据
     const tableData_ = tableData()
-
+    
+    // 拿到非内置字段数据
     const tableData__ =
       Object.keys(tableData_)
       .map(
@@ -108,7 +116,6 @@ Deno.test(
           , {}
           )
       )
-
     assertEquals(
       tableData__
     , userData

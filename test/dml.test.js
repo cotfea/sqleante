@@ -1,9 +1,8 @@
 import dbsql from "../src/dbsql/main.js"
-import { DB,assertEquals } from "../deps.js"
+import { db,assertEquals } from "../deps.js"
 
-const db = new DB("test.db")
 const {
-   showSchema
+  showSchema
 , listTable
 
 , insertTable
@@ -25,8 +24,8 @@ Deno.test({
 
     //  插入一条数据
     const res = insertTable(tableName, {
-      field1: "text52"
-    , field2: "33"
+      field1: "field1"
+    , field2: "field2"
     , field3: 0
     , field4: "2022-03-20"
     })
@@ -43,8 +42,8 @@ Deno.test({
       //  插入一条数据
       const res = insertTable(tableName, [
         {
-          field1: "text53"
-        , field2: "61"
+          field1: "field1"
+        , field2: "field2"
         , field3: 0
         , field4: "2022-04-20"
         },
@@ -183,5 +182,13 @@ Deno.test({
       const isClear=!!Object.keys(allData).length
       // console.log("这个表的所有数据",isClear)
       assertEquals(isClear,false)
+
+       //  插入一条数据
+    const resInsert = insertTable(tableName, {
+      field1: "field1"
+    , field2: "field2"
+    , field3: 0
+    , field4: "2022-03-20"
+    })
   },
 })

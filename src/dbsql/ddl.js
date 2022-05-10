@@ -1,5 +1,6 @@
 const main = query => {
 
+  // 获取SQLite数据库信息
   const showDB = () =>
     query({
       ns: 'showDB'
@@ -7,6 +8,7 @@ const main = query => {
     , sql: 'SELECT * FROM sqlite_master'
     })
 
+  // 获取所有表名或索引名 type:"table"||"index"
   const show = type =>
     showDB().reduce(
       (r, c) => [
@@ -18,6 +20,7 @@ const main = query => {
     , []
     )
 
+  // 查询所有表结构
   const showSchema = tableName => {
     const ret = showDB().reduce(
       (r, c) => ({
@@ -52,6 +55,7 @@ const main = query => {
     : ret
   }
 
+  // 创建某个数据表
   const createTable = (tableName, schema) => {
     const _schema = {
       objectId: 'TEXT UNIQUE'
@@ -80,6 +84,7 @@ const main = query => {
     })
   }
 
+  // 删除某个数据表
   const dropTable = tableName =>
     query({
       ns: 'dropTable'
