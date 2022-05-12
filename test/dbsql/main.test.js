@@ -26,7 +26,7 @@ const cleanTable = () => {
     t => dropTable(t)
     )
   }
-  
+
 // 删除所有表
 cleanTable()
 
@@ -69,7 +69,7 @@ Deno.test(
       new RegExp(`^sqlite_autoindex_${tableName}`).test(showIndexs()[0])
     , true
     )
-    
+
     // 查表结构
     assertEquals(
       showSchema()
@@ -82,7 +82,7 @@ Deno.test(
         }
       }
     )
-  
+
     // 查表数据
     assertEquals(
       listTable(tableName)
@@ -98,7 +98,7 @@ Deno.test(
 
     // 获取(用户)表数据
     const tableData_ = tableData()
-    
+
     // 拿到非内置字段数据
     const tableData__ =
       Object.keys(tableData_)
@@ -116,6 +116,7 @@ Deno.test(
           , {}
           )
       )
+
     assertEquals(
       tableData__
     , userData

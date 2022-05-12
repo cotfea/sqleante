@@ -76,7 +76,7 @@ const getClasses = ({
       return {
         code: 200
       , count: Object.keys(r).length
-      , keys          
+      , keys
       , results: r
       }
     })()
@@ -134,13 +134,13 @@ const cleanClasses = ({
   : {
       code: 202
     , error: `class ${classname} is not exist.`
-    } 
+    }
 }
 
 const deleteClassesByObjectId = ({
   isTableExist
 , getFromTableByObjectId
-, deleteFromTableByObjectId 
+, deleteFromTableByObjectId
 }) => ctx => {
 
   const {

@@ -43,12 +43,11 @@ async (ctx) => {
     ? ctx.params
     : { classname: '' }
     const reqData = await ctx.request.body({type: 'json'}).value
-    
+
     ctx.response.body =
       !isTableExist(classname)
     ? ( () => {
         createTable(classname, reqData)
-    
         return isTableExist(classname)
         ? {
             code: 200

@@ -73,7 +73,9 @@ const groupByObjectId = (
 const main = query => {
 
   // 获取某个表数据
-  const listTable = (tableName, option = {}) =>
+  const listTable = (
+    tableName, option = {}
+  ) =>
 
     groupByObjectId(
       query({
@@ -138,7 +140,9 @@ const main = query => {
   )
 
   // 获取某个表指定id的那条数据
-  const getFromTableByObjectId = (tableName, objectId, option = {}) =>
+  const getFromTableByObjectId = (
+    tableName, objectId, option = {}
+  ) =>
     groupByObjectId(
       query({
         ns: 'getFromTableByObjectId'
@@ -159,7 +163,9 @@ const main = query => {
     )
 
   // 获取某个表的总数据量
-  const countTable = (tableName, option = {}) =>
+  const countTable = (
+    tableName, option = {}
+  ) =>
     listTable(tableName, {
       ...option
     , select: [

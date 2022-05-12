@@ -30,7 +30,7 @@ const ops: Ops_ = {
 type EKey = string
 type EValue_ = Array<string | number>
 type Expression = {
-  [k: EKey]: Expression | Array<Expression> | EValue_ | [string, number, Expression] 
+  [k: EKey]: Expression | Array<Expression> | EValue_ | [string, number, Expression]
 }
 type EvalueArr = Array<Expression> | EValue_ | [string, number, Expression]
 // type Evalue = Expression | EvalueArr
