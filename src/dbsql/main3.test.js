@@ -1,6 +1,6 @@
 import dbsql from './main.js'
 import { DB } from '../dep.js'
-const db = new DB("test.db")
+const db = new DB("sqleante.db")
 
 const {
   showDB

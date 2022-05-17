@@ -4,7 +4,7 @@ export default db => sqlRunner => {
   // console.log({sql_ns: sqlRunner.ns})
 
   const sql = sqlFormat( sqlRunner.sql )
-  // console.log('sql:\n', sql)
+  console.log('sql:\n', sql)
 
   const queryData = db.query(sql)
   // console.log({queryData})

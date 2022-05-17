@@ -174,10 +174,120 @@ const main = query => {
     })
     [0]
 
+  const pointerQuery = (
+    tableName, option = {}
+  ) => {
+
+    const {
+      pointer
+    , ...option_
+    } =
+      Object.keys(option)
+      .includes('pointer')
+    ? option
+    : {
+        pointer: {}
+      , ...option
+      }
+
+    const mainTableDatas = listTable(tableName, option_)
+    const pointerFields = Object.keys(pointer)
+
+    if(!pointer || pointerFields.length === 0) {
+      return mainTable
+    }
+
+    const filedData = pointerFields.reduce(
+      (r, p) => ({
+        ...r
+      , [p]:
+          Object.values(mainTableDatas)
+          .map(
+            t => t[p]
+          )
+      })
+    , {}
+    )
+
+    const otherTableDatas = pointerFields.reduce(
+      (r, f) => {
+        const result = {
+          tableName: ''
+        , data: {}
+        }
+
+        const wherein = {
+          where: {
+            $in: [
+              'objectId'
+            , `(${
+                Array.from(
+                  new Set(
+                    filedData[f]
+                  )
+                )
+                .map(t => `'${t}'`)
+                .join(', ')
+              })`
+            ]
+          }
+        }
+
+        console.log(wherein)
+
+        switch(typeof pointer[f]) {
+
+          case 'string':
+            result.tableName = pointer[f]
+            result.data = {
+              [result.tableName]: listTable(
+                result.tableName
+              , wherein
+              )
+            }
+            break
+
+          case 'object':
+            result.tableName = [Object.keys(pointer[f])[0]]
+            const fields = pointer[f][result.tableName]
+            result.data = {
+              [result.tableName]: listTable(
+                result.tableName
+              , {
+                  select: fields
+                , ...wherein
+                }
+              )
+            }
+            break
+
+          default:
+            result.data = {}
+            break
+        }
+
+
+        return {
+          ...r
+        , ...result.data
+        }
+
+      }
+    , {}
+    )
+
+    return {
+      tableName: mainTableDatas
+    , ...otherTableDatas
+    }
+
+  }
+
   return {
     listTable
   , getFromTableByObjectId
   , countTable
+  , pointerQuery
   }
 
 }

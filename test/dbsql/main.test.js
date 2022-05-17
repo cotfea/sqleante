@@ -2,7 +2,7 @@ import dbsql from '../../src/dbsql/main.js'
 import { DB } from '../../src/dep.js'
 import { assertEquals } from '../dep.js'
 
-const db = new DB("test.db")
+const db = new DB("sqleante.db")
 
 const {
   showDB
