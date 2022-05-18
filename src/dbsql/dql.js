@@ -180,7 +180,7 @@ const main = query => {
 
     const {
       pointer
-    , ...option_
+    , ..._option
     } =
       Object.keys(option)
       .includes('pointer')
@@ -190,11 +190,11 @@ const main = query => {
       , ...option
       }
 
-    const mainTableDatas = listTable(tableName, option_)
+    const mainTableDatas = listTable(tableName, _option)
     const pointerFields = Object.keys(pointer)
 
     if(!pointer || pointerFields.length === 0) {
-      return mainTable
+      return mainTableDatas
     }
 
     const filedData = pointerFields.reduce(
@@ -232,8 +232,6 @@ const main = query => {
             ]
           }
         }
-
-        console.log(wherein)
 
         switch(typeof pointer[f]) {
 

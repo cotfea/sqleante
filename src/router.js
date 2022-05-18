@@ -11,6 +11,7 @@ import {
   insertClasses
 , countClasses
 , getClasses
+, queryWithPointer
 , getClassesByObjectId
 , cleanClasses
 , deleteClassesByObjectId
@@ -30,6 +31,7 @@ const Router = (router, db) => {
   , insertTable
   , countTable
   , listTable
+  , pointerQuery
   , getFromTableByObjectId
   , cleanTable
   , deleteFromTableByObjectId
@@ -80,6 +82,11 @@ const Router = (router, db) => {
   .get('/api/0.1/classes/:classname', getClasses({
     isTableExist
   , listTable
+  }))
+
+  .get('/api/0.1/classes/pointer/:classname', queryWithPointer({
+    isTableExist
+  , pointerQuery
   }))
 
   .get('/api/0.1/classes/:classname/:objectId', getClassesByObjectId({

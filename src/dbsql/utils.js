@@ -5,6 +5,8 @@ const arrayIn = arr =>
     .join(', ')
   } )`
 
+const strWarp = str => `'${str}'`
+
 const sqlFormat = sql =>
   sql
   .replace(/\n/g, '')
@@ -14,4 +16,5 @@ const sqlFormat = sql =>
 export {
   arrayIn
 , sqlFormat
+, strWarp
 }

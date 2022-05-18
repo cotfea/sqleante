@@ -17,7 +17,7 @@ Deno.test({
     // console.log(res)
     // assertEquals(!!res.length,true)
     assertEquals(Array.isArray(res),true)
-  },
+  }
 })
 
 Deno.test({
@@ -27,7 +27,7 @@ Deno.test({
     // console.log(999,res,res2)
     // assertEquals(!!res.length,true)
     assertEquals(Array.isArray(res),true)
-  },
+  }
 })
 
 Deno.test({
@@ -62,7 +62,7 @@ Deno.test({
 
     // 对比所有表名里最后一个是不是 刚新增的那个
     assertEquals(showTableRes[showTableRes.length-1],"table45")
-  },
+  }
 })
 
 Deno.test({
@@ -70,7 +70,7 @@ Deno.test({
   fn: () => {
 
     // console.log("暂无")
-  },
+  }
 })
 
 
@@ -94,12 +94,12 @@ Deno.test({
     assertEquals(isExist,false)
 
      // 创建一个表
-     const createTableRes = createTable("table45", {
+    const createTableRes = createTable("table45", {
       field1: "TEXT"
     , field2: "int"
     , field3: "NUMERIC"
     , field4: "REAL"
     })
-  },
+  }
 })
 

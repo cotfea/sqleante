@@ -72,11 +72,13 @@ const expressionObjToStr = (
 , expressionHandler
   : (e: Expression | unknown) => string
 ): string =>
-  eObj.v.length === 1
+
+    eObj.v.length === 1
+
   ? `${
       ops[ eObj.k.replace(/^\$/, '') ]
     } ${
-      checkKey(eObj.v[0])
+        checkKey(eObj.v[0])
       ? `( ${
           expressionHandler(
             eObj.v[0]
@@ -84,13 +86,19 @@ const expressionObjToStr = (
         } )`
       : eObj.v[0]
     }`
+
   : eObj.v.map(
       (e: string | number | Expression): string =>
-        checkKey(e)
-        ? [ 'and', 'or' ].includes(eObj.k)
-        ? `( ${expressionHandler(e)} )`
-        : expressionHandler(e)
-        : e as string
+
+            checkKey(e)
+        ?   [ '$and', '$or' ].includes(eObj.k)
+        ?   `( ${expressionHandler(e)} )`
+        :   expressionHandler(e)
+        :   eObj.k === '$in'
+        &&  Array.isArray(e)
+        ?   `(${e})`
+        :   `${e}`
+
     )
     .join(` ${ops[
       eObj.k.replace(/^\$/, '')

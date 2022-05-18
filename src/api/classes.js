@@ -1,3 +1,8 @@
+import {
+  oak
+, base64decode
+} from "../dep.js"
+
 const insertClasses = ({
   isTableExist
 , insertTable
@@ -63,15 +68,31 @@ const getClasses = ({
 , listTable
 }) => ctx => {
 
-  const { classname } =
-    ctx.params
-  ? ctx.params
-  : { classname: '' }
+  const queryParams =
+    oak.helpers
+    .getQuery(
+      ctx
+    , { mergeParams: true }
+    )
+
+  const { classname } = queryParams
+
+  const option =
+    queryParams.option
+  ? JSON.parse(
+      String.fromCharCode.apply(
+        null
+      , base64decode(
+          queryParams.option
+        )
+      )
+    )
+  : {}
 
   ctx.response.body =
     isTableExist(classname)
   ? (() => {
-      const r = listTable(classname)
+      const r = listTable(classname, option)
       const keys = Object.keys(r)
       return {
         code: 200
@@ -84,6 +105,45 @@ const getClasses = ({
       code: 201
     , error: `class ${classname} is not exist.`
     }
+}
+
+const queryWithPointer = ({
+  isTableExist
+, pointerQuery
+}) => async ctx => {
+
+  const queryParams =
+    oak.helpers
+    .getQuery(
+      ctx
+    , { mergeParams: true }
+    )
+
+  const { classname } = queryParams
+
+  const option =
+    queryParams.option
+  ? JSON.parse(
+      String.fromCharCode.apply(
+        null
+      , base64decode(
+          queryParams.option
+        )
+      )
+    )
+  : {}
+
+  ctx.response.body =
+    isTableExist(classname)
+  ? {
+      code: 200
+    , results: pointerQuery(classname, option)
+    }
+  : {
+      code: 202
+    , error: `class ${classname} is not exist.`
+    }
+
 }
 
 const getClassesByObjectId = ({
@@ -270,6 +330,7 @@ export {
 , countClasses
 , getClassesByObjectId
 , getClasses
+, queryWithPointer
 , cleanClasses
 , deleteClassesByObjectId
 , deleteClasses
